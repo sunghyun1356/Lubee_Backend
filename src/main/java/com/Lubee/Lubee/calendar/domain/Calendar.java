@@ -26,9 +26,11 @@ public class Calendar extends BaseEntity {
     @JoinColumn(name = "couple_id", nullable = false)
     private Couple couple;
 
+    //해당 날짜
     @Temporal(TemporalType.DATE)
     private Date eventDate;
 
+    // 설명란
     private String description;
 
     @OneToMany(mappedBy = "calendar")

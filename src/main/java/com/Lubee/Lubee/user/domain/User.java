@@ -7,7 +7,6 @@ import com.Lubee.Lubee.date_comment.domain.DateComment;
 import com.Lubee.Lubee.enumset.Profile;
 import com.Lubee.Lubee.firebase.domain.FireBase;
 import com.Lubee.Lubee.memory.domain.Memory;
-import com.Lubee.Lubee.user_calendar_memory.domain.UserCalendarMemory;
 import com.Lubee.Lubee.user_memory.domain.UserMemory;
 import com.Lubee.Lubee.user_memory_reaction.domain.UserMemoryReaction;
 import jakarta.persistence.*;
@@ -23,28 +22,34 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
+    // primary key
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userid")
     private Long id;
 
+    // 로그인 시 필요한 username
     @Column(nullable = false)
     private String username;
 
+    // 비밀번호
     @Column(nullable = false)
     private String password;
 
+    // 이메일
     @Column(nullable = false, unique = true)
     private String email;
 
-    private int year;
-
+    // 생일
     private Date birthday;
 
+    // 프로필
     private Profile profile;
 
+    // 닉네임
     private String nickname;
 
+    // 커플 인증 여부
     private boolean alreadyCouple;
 
     @OneToMany(mappedBy = "user")
@@ -52,9 +57,6 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<UserMemory> userMemories;
-
-    @OneToMany(mappedBy = "user")
-    private List<UserCalendarMemory> userCalendarMemories;
 
     @ManyToOne
     @JoinColumn(name = "couple_id", nullable = false)

@@ -21,18 +21,25 @@ public class Location {
     @Column(name = "location_id")
     private Long location_id;
 
+    // 좌표
     private Point coordinate;
 
+    // 위치를 볼 수 있는 spot
     private Spot spot;
 
+    // 위치 사진
     private String picture;
 
+    // 위치 이름
     private String name;
 
+    // 위치 주소
     private String parcelBaseAddress;
 
+    // 위치 카테고리
     private Category category;
 
+    // 몇번이나 방문한 곳인지
     private int count;
 
     @OneToMany(mappedBy = "location")

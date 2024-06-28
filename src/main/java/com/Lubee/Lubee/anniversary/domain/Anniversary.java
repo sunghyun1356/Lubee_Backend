@@ -16,7 +16,9 @@ public class Anniversary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long anniversary_id;
 
+    // 기념일 이름
     private String title;
+    // 기념일 날짜
     private Date anniversary_date;
 
     @ManyToOne
