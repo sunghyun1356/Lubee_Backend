@@ -12,6 +12,8 @@ public enum ErrorType {
     NOT_FOUND_USER(400, "사용자가 존재하지 않습니다."),
     NOT_FOUND(400,"해당 데이터가 존재하지 않습니다" ),
     LOGIN_FAIL(400, "로그인에 실패하였습니다. 아이디 OR 비밀번호를 확인해주세요"),
+    REFRESH_TOKEN_NOT_VALIDATE(404, "Refresh 토큰이 존재하지 않거나 만료되었습니다."),
+    ACCESS_TOKEN_NOT_EXPIRED(400, "엑세스 토큰이 존재하지 않거나 만료되었습니다.")
     ;
 
 
