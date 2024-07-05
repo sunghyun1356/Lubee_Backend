@@ -1,6 +1,5 @@
 package com.Lubee.Lubee.user.domain;
 
-import com.Lubee.Lubee.calendar_memory.domain.CalendarMemory;
 import com.Lubee.Lubee.common.BaseEntity;
 import com.Lubee.Lubee.common.enumSet.LoginType;
 import com.Lubee.Lubee.common.enumSet.UserRoleEnum;
@@ -8,7 +7,6 @@ import com.Lubee.Lubee.couple.domain.Couple;
 import com.Lubee.Lubee.date_comment.domain.DateComment;
 import com.Lubee.Lubee.enumset.Profile;
 import com.Lubee.Lubee.firebase.domain.FireBase;
-import com.Lubee.Lubee.memory.domain.Memory;
 import com.Lubee.Lubee.user_calendar_memory.domain.UserCalendarMemory;
 import com.Lubee.Lubee.user_memory.domain.UserMemory;
 import com.Lubee.Lubee.user_memory_reaction.domain.UserMemoryReaction;
@@ -95,6 +93,11 @@ public class User extends BaseEntity {
         user.setPassword(password); // 패스워드 설정
         user.setRole(role); // 역할 설정
         return user; // 사용자 반환
+    }
+
+    public void linkCouple(Couple couple) {         // 커플 연결됐을 때 user 정보 변경
+        this.couple = couple;
+        this.alreadyCouple = true;
     }
 
 }
