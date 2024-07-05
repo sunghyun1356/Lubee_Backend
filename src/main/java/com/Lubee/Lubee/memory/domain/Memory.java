@@ -1,12 +1,10 @@
 package com.Lubee.Lubee.memory.domain;
 
-import com.Lubee.Lubee.calendar.domain.Calendar;
 import com.Lubee.Lubee.calendar_memory.domain.CalendarMemory;
 import com.Lubee.Lubee.common.BaseEntity;
 import com.Lubee.Lubee.couple.domain.Couple;
 import com.Lubee.Lubee.date_comment.domain.DateComment;
 import com.Lubee.Lubee.location.domain.Location;
-import com.Lubee.Lubee.user.domain.User;
 import com.Lubee.Lubee.user_memory.domain.UserMemory;
 import com.Lubee.Lubee.user_memory_reaction.domain.UserMemoryReaction;
 import jakarta.persistence.*;

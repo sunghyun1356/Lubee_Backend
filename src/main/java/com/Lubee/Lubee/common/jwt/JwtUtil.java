@@ -2,7 +2,8 @@ package com.Lubee.Lubee.common.jwt;
 
 import com.Lubee.Lubee.common.enumSet.UserRoleEnum;
 import com.Lubee.Lubee.common.security.UserDetailsServiceImpl;
-import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

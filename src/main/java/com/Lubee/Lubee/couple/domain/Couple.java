@@ -6,9 +6,11 @@ import com.Lubee.Lubee.date_comment.domain.DateComment;
 import com.Lubee.Lubee.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class Couple {
 
     @OneToMany
     @JoinColumn(name = "user_id", nullable = false)
-    private List<User> user;
+    private List<User> user = new ArrayList<>();
 
     @OneToMany(mappedBy = "couple")
     private List<Calendar> calendars;
@@ -42,4 +44,14 @@ public class Couple {
 
     @OneToMany(mappedBy = "couple")
     private List<Anniversary> anniversaries;
+
+    @Builder
+    public Couple(User requester, User receiver) {
+        user.add(requester);
+        user.add(receiver);
+        this.subscribe = false;
+        this.total_honey = 0L;
+        this.present_honey = 0;
+    }
+
 }
