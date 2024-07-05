@@ -53,5 +53,9 @@ public class Couple {
         this.total_honey = 0L;
         this.present_honey = 0;
     }
+    public void setting_start(Couple couple, Date startDate)
+    {
+        this.startDate = startDate;
+    }
 
 }

@@ -7,8 +7,11 @@ import com.Lubee.Lubee.common.enumSet.LoginType;
 import com.Lubee.Lubee.common.enumSet.UserRoleEnum;
 import com.Lubee.Lubee.common.exception.RestApiException;
 import com.Lubee.Lubee.common.jwt.JwtUtil;
+import com.Lubee.Lubee.couple.domain.Couple;
+import com.Lubee.Lubee.couple.repository.CoupleRepository;
 import com.Lubee.Lubee.user.domain.User;
 import com.Lubee.Lubee.user.dto.KakaoUserInfoDto;
+import com.Lubee.Lubee.user.dto.SignupDto;
 import com.Lubee.Lubee.user.dto.TokenDto;
 import com.Lubee.Lubee.user.repository.UserRepository;
 import com.google.gson.JsonElement;
@@ -30,6 +33,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,6 +44,7 @@ import java.util.stream.Collectors;
 public class OauthService {
 
     private final UserRepository userRepository;
+    private final CoupleRepository coupleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
@@ -179,7 +184,7 @@ public class OauthService {
 
     // 카카오 로그인 - 엑세스 토큰 받아서 로그인
     @Transactional
-    public ApiResponseDto<TokenDto> kakaoLogin(String kakaoAccesstoken) {
+    public ApiResponseDto<TokenDto> kakaoLoginOrSignup(String kakaoAccesstoken, SignupDto signupDto, Date StartDate) {
         /*
             1. 카카오 엑세스 토큰으로 유저 정보 받아오기
             2-1. DB에 없는 ID면 -> 회원가입
@@ -195,6 +200,7 @@ public class OauthService {
         // 회원 아이디 중복 확인 -> DB에 존재하지 않으면 회원가입 수행
         Optional<User> user = userRepository.findByUsernameAndLoginType(username, LoginType.KAKAO);
 
+        // 회원가입 온보딩을 한다.
         if (user.isEmpty()) {
             // 입력한 username, password, admin 으로 user 객체 만들어 repository 에 저장
             UserRoleEnum role = UserRoleEnum.USER; // 카카오 유저 ROLE 임의 설정
@@ -212,10 +218,18 @@ public class OauthService {
             userRepository.save(signUpUser);
 
             // response 생성
-            tokenDto.setMessage("카카오 회원가입 성공");
+            tokenDto.setMessage("카카오 회원가입 절반 성공, 온보딩으로 이동!");
             tokenDto.setAccessToken(accessToken);
             tokenDto.setRefreshToken(refreshToken);
 
+            // 여기서 온보딩 실행
+            signUpUser.UserSignup(signUpUser, signupDto);
+            Optional<Couple> optionalCouple = coupleRepository.findCoupleByUser(signUpUser);
+            Couple couple = optionalCouple.orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_USER));
+
+            couple.setting_start(couple, StartDate);
+            userRepository.save(signUpUser);
+            coupleRepository.save(couple);
             return ResponseUtils.ok(tokenDto, null);
 
         } else { // DB에 존재하면 로그인 수행
