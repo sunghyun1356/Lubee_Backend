@@ -53,6 +53,4 @@ public class Memory extends BaseEntity {
     @OneToMany(mappedBy = "memory")
     private List<UserMemoryReaction> userMemoryReactions;
 
-    @OneToMany(mappedBy = "memory")
-    private List<DateComment> dateComments;
 }
