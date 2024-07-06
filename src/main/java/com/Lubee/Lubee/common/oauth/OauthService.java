@@ -225,7 +225,7 @@ public class OauthService {
             // 여기서 온보딩 실행
             signUpUser.UserSignup(signUpUser, signupDto);
             Optional<Couple> optionalCouple = coupleRepository.findCoupleByUser(signUpUser);
-            Couple couple = optionalCouple.orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_USER));
+            Couple couple = optionalCouple.orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_COUPLE));
 
             couple.setting_start(couple, StartDate);
             userRepository.save(signUpUser);
