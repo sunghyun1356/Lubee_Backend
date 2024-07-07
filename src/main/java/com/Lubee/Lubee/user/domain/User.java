@@ -7,11 +7,14 @@ import com.Lubee.Lubee.couple.domain.Couple;
 import com.Lubee.Lubee.date_comment.domain.DateComment;
 import com.Lubee.Lubee.enumset.Profile;
 import com.Lubee.Lubee.firebase.domain.FireBase;
+import com.Lubee.Lubee.user.dto.SignupDto;
 import com.Lubee.Lubee.user_calendar_memory.domain.UserCalendarMemory;
 import com.Lubee.Lubee.user_memory.domain.UserMemory;
 import com.Lubee.Lubee.user_memory_reaction.domain.UserMemoryReaction;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.util.Date;
 import java.util.List;
@@ -20,6 +23,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
 public class User extends BaseEntity {
 
     @Id
@@ -27,6 +31,7 @@ public class User extends BaseEntity {
     @Column(name = "userid")
     private Long id;
 
+    // 여기서 카카오 아이디가 들어간다
     @Column(nullable = false)
     private String username;
 
@@ -36,15 +41,13 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
-    private int year;
-
     private Date birthday;
 
     private Profile profile;
 
     private String nickname;
 
-    private boolean alreadyCouple;
+    private boolean alreadyCouple = false;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -98,6 +101,12 @@ public class User extends BaseEntity {
     public void linkCouple(Couple couple) {         // 커플 연결됐을 때 user 정보 변경
         this.couple = couple;
         this.alreadyCouple = true;
+    }
+    public void UserSignup(User user, SignupDto signupDto)
+    {
+        user.setNickname(signupDto.getNickname());
+        user.setProfile(signupDto.getProfile());
+        user.setBirthday(signupDto.getBirthday());
     }
 
 }
