@@ -4,11 +4,13 @@ import com.Lubee.Lubee.anniversary.domain.Anniversary;
 import com.Lubee.Lubee.calendar.domain.Calendar;
 import com.Lubee.Lubee.date_comment.domain.DateComment;
 import com.Lubee.Lubee.user.domain.User;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +26,8 @@ public class Couple {
     @Column(name = "couple_id")
     private Long id;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date startDate;
 
     private boolean subscribe;
