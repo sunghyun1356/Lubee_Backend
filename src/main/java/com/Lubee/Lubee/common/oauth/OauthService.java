@@ -70,10 +70,10 @@ public class OauthService {
             BufferedWriter bw = new BufferedWriter((new OutputStreamWriter(conn.getOutputStream()))); // 전송하기 위한 것
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=??????"); // 배포 하고 나서 설정
-            sb.append("&redirect_uri=????"); // 이부분 나중에 변경해야함
+            sb.append("&client_id=b44b96ece6b8e583992e31faf51c9504"); // 배포 하고 나서 설정
+            sb.append("&redirect_uri=http://localhost:8080/api/users/kakao"); // 이부분 나중에 변경해야함
             sb.append("&client_secret=??????"); // 이거는 나중에 코드에서 삭제해야 함(secret key니까!)
-            sb.append("&code=" + code);
+            sb.append("&code=").append(code);
             bw.write(sb.toString());
             bw.flush();
 
