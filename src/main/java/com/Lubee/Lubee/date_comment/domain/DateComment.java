@@ -42,4 +42,8 @@ public class DateComment extends BaseEntity {
         this.calendar = calendar;
     }
 
+    public void changeContent(String content){
+        this.content = content;
+    }
+
 }

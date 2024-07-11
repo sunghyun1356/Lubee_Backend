@@ -6,6 +6,7 @@ import com.Lubee.Lubee.couple.domain.Couple;
 import com.Lubee.Lubee.date_comment.domain.DateComment;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,5 +38,16 @@ public class Calendar extends BaseEntity {
 
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DateComment> dateComments = new ArrayList<>();
+
+
+    @Builder
+    public Calendar(Couple couple, Date eventDate) {
+        this.couple = couple;
+        this.eventDate = eventDate;
+    }
+
+    public void addDateComment(DateComment dateComment) {
+        dateComments.add(dateComment);
+    }
 
 }

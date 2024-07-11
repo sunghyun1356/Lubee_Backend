@@ -42,6 +42,13 @@ public enum ErrorType {
     REQUESTER_ALREADY_COUPLED(400, "커플 신청자가 이미 커플입니다."),
     RECEIVER_ALREADY_COUPLED(400, "커플 요청받은 사람이 이미 커플입니다."),
     NOT_FOUND_COUPLE(404, "해당 커플 정보를 찾을 수 없습니다"),
+    NOT_FOUND_CALENDAR(404, "달력이 존재하지 않습니다."),
+    NOT_FOUND_DATE_COMMENT(404, "데이트코멘트가 존재하지 않습니다."),
+    NOT_MATCHING_USER(403, "유저 정보가 알맞지 않습니다."),
+    NOT_MATCHING_COUPLE(403, "커플 정보가 알맞지 않습니다."),
+    NOT_MATCHING_CALENDAR(403, "달력 정보가 알맞지 않습니다."),
+    INSUFFICIENT_COMMENTS(403, "두 명의 구성원이 모두 데이트 코멘트를 작성해야 열람할 수 있습니다."),
+    NOT_FOUND_COUPLE_DATE_COMMENT(404, "커플 모두 데이트코멘트를 작성하지 않았습니다.")
     ;
 
 
