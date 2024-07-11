@@ -42,4 +42,10 @@ public class UserController {
         return oAuthService.refreshKakaoToken(accessToken, refreshToken);
     }
 
+    @GetMapping("/kakak/simple")
+    public ApiResponseDto<TokenDto> kakaoSimple(@RequestParam("code") String code)
+    {
+        return oAuthService.kakaoLogin(code);
+    }
+
 }

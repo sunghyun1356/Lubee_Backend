@@ -1,10 +1,12 @@
 package com.Lubee.Lubee.memory.dto;
 
+import com.Lubee.Lubee.date_comment.dto.DateCommentBaseDto;
 import com.Lubee.Lubee.enumset.Profile;
 import com.Lubee.Lubee.memory.domain.Memory;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -19,7 +21,7 @@ public class HomeDto {
     private int honey;
     private Profile profile1;
     private Profile profile2;
-    private DateCommentDto dateCommentDto;
+    private List<DateCommentBaseDto> dateCommentBasetDtoList;
     private List<MemoryBaseDto> memoryBaseDtoList;
 
 
