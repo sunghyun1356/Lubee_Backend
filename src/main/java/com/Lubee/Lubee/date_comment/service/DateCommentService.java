@@ -11,10 +11,7 @@ import com.Lubee.Lubee.common.exception.RestApiException;
 import com.Lubee.Lubee.couple.domain.Couple;
 import com.Lubee.Lubee.couple.repository.CoupleRepository;
 import com.Lubee.Lubee.date_comment.domain.DateComment;
-import com.Lubee.Lubee.date_comment.dto.CreateDateCommentRequest;
-import com.Lubee.Lubee.date_comment.dto.DateCommentResponse;
-import com.Lubee.Lubee.date_comment.dto.TodayCoupleDateCommentRequest;
-import com.Lubee.Lubee.date_comment.dto.UpdateDateCommentRequest;
+import com.Lubee.Lubee.date_comment.dto.*;
 import com.Lubee.Lubee.date_comment.repository.DateCommentRepository;
 import com.Lubee.Lubee.user.domain.User;
 import com.Lubee.Lubee.user.repository.UserRepository;
@@ -26,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -184,4 +182,11 @@ public class DateCommentService {
         return null; // 적절한 Couple을 찾지 못한 경우 null 반환
     }
 
+    public List<DateCommentBaseDto> getDateCommentsByCoupleAndCalendar(Couple couple, Calendar calendar) {
+        List<DateComment> dateComments = dateCommentRepository.findByCoupleAndCalendar(couple, calendar);
+
+        return dateComments.stream()
+                .map(dateComment -> DateCommentBaseDto.of(dateComment.getContent(), dateComment.getUser().getProfile()))
+                .collect(Collectors.toList());
+    }
 }

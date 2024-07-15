@@ -48,7 +48,8 @@ public enum ErrorType {
     NOT_MATCHING_COUPLE(403, "커플 정보가 알맞지 않습니다."),
     NOT_MATCHING_CALENDAR(403, "달력 정보가 알맞지 않습니다."),
     INSUFFICIENT_COMMENTS(403, "두 명의 구성원이 모두 데이트 코멘트를 작성해야 열람할 수 있습니다."),
-    NOT_FOUND_COUPLE_DATE_COMMENT(404, "커플 모두 데이트코멘트를 작성하지 않았습니다.")
+    NOT_FOUND_COUPLE_DATE_COMMENT(404, "커플 모두 데이트코멘트를 작성하지 않았습니다."),
+    NOT_FOUND_LOCATION(404, "해당 Location 데이터가 존재하지 않습니다."),
     ;
 
 

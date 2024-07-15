@@ -19,8 +19,7 @@ public class HomeDto {
     private Date today;
     private Long love_day;
     private int honey;
-    private Profile profile1;
-    private Profile profile2;
+    private List<Profile> profiles;
     private List<DateCommentBaseDto> dateCommentBasetDtoList;
     private List<MemoryBaseDto> memoryBaseDtoList;
 

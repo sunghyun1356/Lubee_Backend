@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum Profile {
-    HONGDAE_YEONNAM("홍대/연남"),
-    HAPJEONG("합정"),
-    SINCHON("신촌"),
+    first("첫번쨰"),
+    second("두번쨰"),
+    third("세번쨰"),
     ETC("etc");
 
     private final String displayName;

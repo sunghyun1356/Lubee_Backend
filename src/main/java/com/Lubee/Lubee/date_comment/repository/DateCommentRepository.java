@@ -12,4 +12,5 @@ public interface DateCommentRepository extends JpaRepository<DateComment, Long> 
 
     DateComment findByUserAndCalendar(User user, Calendar calendar);
     List<DateComment> findByCoupleAndCalendar(Couple couple, Calendar calendar);
+
 }

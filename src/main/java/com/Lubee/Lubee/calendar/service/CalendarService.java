@@ -79,6 +79,13 @@ public class CalendarService {
                 ErrorResponse.builder().status(200).message("요청 성공").build()
         );
     }
+    @Transactional(readOnly = true)
+    public Long getToalHoney(User user)
+    {
+        final Couple couple = coupleRepository.findCoupleByUser(user)
+                .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_COUPLE));
+        return couple.getTotal_honey();
+    }
 
     /**
      * <커플의 월별 꿀 개수 조회>

@@ -8,6 +8,8 @@ import com.Lubee.Lubee.common.exception.RestApiException;
 import com.Lubee.Lubee.couple.domain.Couple;
 import com.Lubee.Lubee.couple.dto.LubeeCodeResponse;
 import com.Lubee.Lubee.couple.repository.CoupleRepository;
+import com.Lubee.Lubee.enumset.Profile;
+import com.Lubee.Lubee.memory.dto.MemoryBaseDto;
 import com.Lubee.Lubee.user.domain.User;
 import com.Lubee.Lubee.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -107,5 +107,18 @@ public class CoupleService {
 
         return ResponseUtils.ok(couple.getId(), ErrorResponse.builder().status(200).message("커플 생성 성공").build());
     }
+    @Transactional
+    public List<Profile> getCouplesProfile(Couple couple)
+    {
+
+        return (ArrayList<Profile>) coupleRepository.findProfilesByCoupleId(couple.getId());
+    }
+    @Transactional
+    public Couple getCoupleByUser(User user)
+    {
+        return coupleRepository.findCoupleByUser(user).
+                orElseThrow(() ->new RestApiException(ErrorType.NOT_FOUND_COUPLE));
+    }
+
 
 }
