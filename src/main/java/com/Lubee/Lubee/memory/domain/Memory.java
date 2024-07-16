@@ -12,6 +12,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -19,7 +20,8 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
 public class Memory extends BaseEntity {
 
     @Id
@@ -40,7 +42,7 @@ public class Memory extends BaseEntity {
 
 
     @ManyToOne
-    @JoinColumn(name = "user_memory_id", nullable = false)
+    @JoinColumn(name = "user_memory_id")
     private UserMemory userMemory;
 
     @ManyToOne

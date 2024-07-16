@@ -1,6 +1,6 @@
 package com.Lubee.Lubee.user.dto;
 
-import com.Lubee.Lubee.enumset.Profile;
+import com.Lubee.Lubee.profile.domain.Profile;
 import lombok.*;
 
 import java.util.Date;
@@ -12,6 +12,6 @@ import java.util.Date;
 @AllArgsConstructor
 public class SignupDto {
     String nickname;
-    Profile profile;
+    String profile;
     Date birthday;
 }

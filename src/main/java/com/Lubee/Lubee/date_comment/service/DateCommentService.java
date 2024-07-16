@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -182,8 +183,8 @@ public class DateCommentService {
         return null; // 적절한 Couple을 찾지 못한 경우 null 반환
     }
 
-    public List<DateCommentBaseDto> getDateCommentsByCoupleAndCalendar(Couple couple, Calendar calendar) {
-        List<DateComment> dateComments = dateCommentRepository.findByCoupleAndCalendar(couple, calendar);
+    public List<DateCommentBaseDto> getDateCommentsByCoupleAndCalendar(Couple couple, Date today) {
+        List<DateComment> dateComments = dateCommentRepository.findByCoupleAndCalendarEventDate(couple, today);
 
         return dateComments.stream()
                 .map(dateComment -> DateCommentBaseDto.of(dateComment.getContent(), dateComment.getUser().getProfile()))

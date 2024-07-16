@@ -1,19 +1,17 @@
 package com.Lubee.Lubee.memory.dto;
 
-import com.Lubee.Lubee.enumset.Profile;
 import com.Lubee.Lubee.enumset.Reaction;
+import com.Lubee.Lubee.profile.domain.Profile;
 import lombok.*;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
-@Builder
 @Getter
 public class MemoryBaseDto {
     private String location_name;
     private String picture;
-    private Profile writer_profile;
+    private String writer_profile;
     private Reaction reaction1;
     private Reaction reaction2;
 
@@ -21,7 +19,7 @@ public class MemoryBaseDto {
     {
         this.location_name = location_name;
         this.picture = picture;
-        this.writer_profile = writer_profile;
+        this.writer_profile = writer_profile.getProfielUrl();
         this.reaction1 = reaction1;
         this.reaction2 = reaction2;
 

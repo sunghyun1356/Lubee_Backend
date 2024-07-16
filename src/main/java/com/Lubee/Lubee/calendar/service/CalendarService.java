@@ -79,8 +79,9 @@ public class CalendarService {
                 ErrorResponse.builder().status(200).message("요청 성공").build()
         );
     }
+
     @Transactional(readOnly = true)
-    public Long getToalHoney(User user)
+    public Long getTotalHoney(User user)
     {
         final Couple couple = coupleRepository.findCoupleByUser(user)
                 .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_COUPLE));
@@ -115,6 +116,8 @@ public class CalendarService {
                 ErrorResponse.builder().status(200).message("요청 성공").build()
         );
     }
+
+
 
 
 }
