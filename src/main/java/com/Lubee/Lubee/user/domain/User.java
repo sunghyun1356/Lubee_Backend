@@ -57,10 +57,6 @@ public class User extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private UserRoleEnum role;
-
     @OneToMany(mappedBy = "user")
     private List<DateComment> dateComments;
 
