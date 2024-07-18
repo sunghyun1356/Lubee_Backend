@@ -30,4 +30,5 @@ public class CalendarMemory extends BaseEntity {
     @JoinColumn(name = "memory_id", nullable = false)
     private Memory memory;
 
+    
 }

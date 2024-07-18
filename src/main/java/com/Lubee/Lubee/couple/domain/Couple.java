@@ -4,11 +4,15 @@ import com.Lubee.Lubee.anniversary.domain.Anniversary;
 import com.Lubee.Lubee.calendar.domain.Calendar;
 import com.Lubee.Lubee.date_comment.domain.DateComment;
 import com.Lubee.Lubee.user.domain.User;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +26,8 @@ public class Couple {
     @Column(name = "couple_id")
     private Long id;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date startDate;
 
     private boolean subscribe;
@@ -32,7 +38,7 @@ public class Couple {
 
     @OneToMany
     @JoinColumn(name = "user_id", nullable = false)
-    private List<User> user;
+    private List<User> user = new ArrayList<>();
 
     @OneToMany(mappedBy = "couple")
     private List<Calendar> calendars;
@@ -42,4 +48,18 @@ public class Couple {
 
     @OneToMany(mappedBy = "couple")
     private List<Anniversary> anniversaries;
+
+    @Builder
+    public Couple(User requester, User receiver) {
+        user.add(requester);
+        user.add(receiver);
+        this.subscribe = false;
+        this.total_honey = 0L;
+        this.present_honey = 0;
+    }
+    public void setting_start(Couple couple, Date startDate)
+    {
+        this.startDate = startDate;
+    }
+
 }
