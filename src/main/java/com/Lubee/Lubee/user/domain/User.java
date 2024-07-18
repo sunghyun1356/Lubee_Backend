@@ -2,6 +2,7 @@ package com.Lubee.Lubee.user.domain;
 
 import com.Lubee.Lubee.calendar_memory.domain.CalendarMemory;
 import com.Lubee.Lubee.common.BaseEntity;
+import com.Lubee.Lubee.common.enumSet.UserRoleEnum;
 import com.Lubee.Lubee.couple.domain.Couple;
 import com.Lubee.Lubee.date_comment.domain.DateComment;
 import com.Lubee.Lubee.enumset.Profile;
@@ -46,6 +47,10 @@ public class User extends BaseEntity {
     private String nickname;
 
     private boolean alreadyCouple;
+
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
 
     @OneToMany(mappedBy = "user")
     private List<DateComment> dateComments;

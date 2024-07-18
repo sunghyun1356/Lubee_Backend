@@ -1,6 +1,7 @@
 package com.Lubee.Lubee.common.security;
 
 import com.Lubee.Lubee.common.enumSet.ErrorType;
+import com.Lubee.Lubee.user.domain.User;
 import com.Lubee.Lubee.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
