@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://lubee.cjy6c68ea7sc.ap-northeast-2.rds.amazonaws.com:3306/Lubee
     username: root
-    password: ${mysql-pw}
+    password: ${mysql_pw}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     show-sql: true
@@ -29,12 +29,12 @@ cloud:
     stack:
       auto: false
     credentials:
-      access-key: ${s3-access-key}
-      secret-key: ${s3-secret-key}
-JWT_TOKEN : ${jwt-token}
+      access-key: ${s3_access_key}
+      secret-key: ${s3_secret_key}
+JWT_TOKEN : ${jwt_token}
 
 secrets:
-  RESTAURANT_API_KEY : ${restaurant-api-key}
-  CULTURE_API_KEY : ${culture-api-key}
-  DOCKERHUB_USERNAME : ${dockerhub-username}
-  DOCKERHUB_PASSWORD : ${dockerhub-password}
+  RESTAURANT_API_KEY : ${restaurant_api_key}
+  CULTURE_API_KEY : ${culture_api_key}
+  DOCKERHUB_USERNAME : ${dockerhub_username}
+  DOCKERHUB_PASSWORD : ${dockerhub_password}
