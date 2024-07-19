@@ -26,21 +26,20 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
+@Table(name = "user")
 public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userid")
     private Long id;
 
-    // 여기서 카카오 아이디가 들어간다
     @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true, unique = true)
     private String email;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -67,7 +66,7 @@ public class User extends BaseEntity {
     private List<UserCalendarMemory> userCalendarMemories;
 
     @ManyToOne
-    @JoinColumn(name = "couple_id", nullable = false)
+    @JoinColumn(name = "couple_id")
     private Couple couple;
 
     @OneToMany(mappedBy = "user")
@@ -78,7 +77,6 @@ public class User extends BaseEntity {
 
     private LoginType loginType;
 
-    // 카카오 로그인 refresh 토큰
     private String kakaoRefreshToken;
 
     @Builder
@@ -86,31 +84,30 @@ public class User extends BaseEntity {
         this.loginType = socialType;
         this.username = socialId;
     }
-    public User(String username, String email, String userPuzzleId, UserRoleEnum role, String refreshToken, LoginType loginType )
-    {
+
+    public User(String username, String email, String userPuzzleId, UserRoleEnum role, String refreshToken, LoginType loginType) {
         this.username = username;
         this.email = email;
         this.role = role;
         this.kakaoRefreshToken = refreshToken;
         this.loginType = loginType;
-
-    }
-    public static User of(LoginType loginType,  String username, String password, UserRoleEnum role) {
-        User user = new User(loginType, username); // 일반 로그인 타입으로 사용자 생성
-        user.setPassword(password); // 패스워드 설정
-        user.setRole(role); // 역할 설정
-        return user; // 사용자 반환
     }
 
-    public void linkCouple(Couple couple) {         // 커플 연결됐을 때 user 정보 변경
+    public static User of(LoginType loginType, String username, String password, UserRoleEnum role) {
+        User user = new User(loginType, username);
+        user.setPassword(password);
+        user.setRole(role);
+        return user;
+    }
+
+    public void linkCouple(Couple couple) {
         this.couple = couple;
         this.alreadyCouple = true;
     }
-    public void UserSignup(User user, SignupDto signupDto)
-    {
+
+    public void UserSignup(User user, SignupDto signupDto) {
         user.setNickname(signupDto.getNickname());
         user.setProfile(signupDto.getProfile());
         user.setBirthday(signupDto.getBirthday());
     }
-
 }

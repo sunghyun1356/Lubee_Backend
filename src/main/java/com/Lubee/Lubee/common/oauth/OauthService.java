@@ -37,7 +37,8 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -70,9 +71,9 @@ public class OauthService {
             BufferedWriter bw = new BufferedWriter((new OutputStreamWriter(conn.getOutputStream()))); // 전송하기 위한 것
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=b44b96ece6b8e583992e31faf51c9504"); // 배포 하고 나서 설정
-            sb.append("&redirect_uri=http://localhost:8080/api/users/kakao"); // 이부분 나중에 변경해야함
-            sb.append("&client_secret=??????"); // 이거는 나중에 코드에서 삭제해야 함(secret key니까!)
+            sb.append("&client_id=37ff99a682a47c8a4c61cd10f699a17f"); // 배포 하고 나서 설정
+            sb.append("&redirect_uri=http://localhost:8080/api/users/kakao/simpleLogin"); // 이부분 나중에 변경해야함
+            sb.append("&client_secret=AYKKr2WWSmWqlLb7gfMPmpuvQZUDXC2G");
             sb.append("&code=").append(code);
             bw.write(sb.toString());
             bw.flush();
@@ -131,7 +132,7 @@ public class OauthService {
             conn.setRequestMethod("GET");
             conn.setDoOutput(true);
             conn.setRequestProperty("Authorization", "Bearer " + accessToken); //전송할 header 작성, access_token전송
-
+            System.out.println("conn" + conn);
             //결과 코드가 200이라면 성공
             int responseCode = conn.getResponseCode();
             System.out.println("responseCode : " + responseCode);
@@ -191,7 +192,7 @@ public class OauthService {
             2-2. DB에 있는 ID면 -> 로그인
          */
 
-        KakaoUserInfoDto kakaoUserInfoDto = getKakaoUserInfo(kakaoAccesstoken); // 카카오 유저 정보 받아오기
+        KakaoUserInfoDto kakaoUserInfoDto = kakaoUserDetail(kakaoAccesstoken); // 카카오 유저 정보 받아오기
 
         // 아이디, 비밀번호 받아오기
         String username = kakaoUserInfoDto.getKakaoId();
@@ -284,6 +285,129 @@ public class OauthService {
         tokenDto.setRefreshToken(refreshTokenOrigin);
 
         return ResponseUtils.ok(tokenDto, null);
+    }
+
+
+    @Transactional
+    public ApiResponseDto<TokenDto> kakaoLoginOrSignupSimple(String code) {
+
+        String kakaoAccessToken = getKakaoAccessToken(code);
+        KakaoUserInfoDto kakaoUserInfoDto = getKakaoUserInfo(kakaoAccessToken); // 카카오 유저 정보 받아오기
+
+        System.out.println("kakaoUserInfoDto: " + kakaoUserInfoDto);
+        // 아이디, 비밀번호 받아오기
+        String username = kakaoUserInfoDto.getKakaoId();
+        String password = passwordEncoder.encode("kakaouserpassword"); // 카카오 유저 비밀번호 임의 설정
+        System.out.println("Username: " + username);
+        System.out.println("Password: " + password);
+        // 회원 아이디 중복 확인 -> DB에 존재하지 않으면 회원가입 수행
+        Optional<User> user = userRepository.findByUsernameAndLoginType(username, LoginType.KAKAO);
+        TokenDto tokenDto = new TokenDto();
+        // 회원가입 온보딩을 한다.
+        if (user.isEmpty()) {
+            // 입력한 username, password, admin 으로 user 객체 만들어 repository 에 저장
+            UserRoleEnum role = UserRoleEnum.USER; // 카카오 유저 ROLE 임의 설정
+            User signUpUser = User.of(LoginType.KAKAO, username, password, role);
+            signUpUser.setLoginType(LoginType.KAKAO);
+
+
+            String accessToken = jwtUtil.createAccessToken(signUpUser.getUsername(), signUpUser.getRole());
+            String refreshToken = jwtUtil.createRefreshToken(signUpUser.getUsername(), signUpUser.getRole());
+
+            // refresh token을 DB에 저장
+            signUpUser.setKakaoRefreshToken(refreshToken);
+            userRepository.save(signUpUser);
+
+            // response 생성
+            tokenDto.setMessage("카카오 회원가입 절반 성공, 온보딩으로 이동!");
+            tokenDto.setAccessToken(accessToken);
+            tokenDto.setRefreshToken(refreshToken);
+
+
+        } else { // DB에 존재하면 로그인 수행
+            // 토큰 생성
+
+            String accessToken = jwtUtil.createAccessToken(user.get().getUsername(), user.get().getRole());
+            String refreshToken = jwtUtil.createRefreshToken(user.get().getUsername(), user.get().getRole());
+
+            // refresh token을 DB에 저장
+            user.get().setKakaoRefreshToken(refreshToken);
+            userRepository.save(user.get());
+
+            // response 생성
+            tokenDto.setMessage("카카오 로그인 성공");
+            tokenDto.setAccessToken(accessToken);
+            tokenDto.setRefreshToken(refreshToken);
+
+
+        }
+        return ResponseUtils.ok(tokenDto, null);
+    }
+
+        @Transactional
+    // 기존 카카오 로그인 매서드
+    public ApiResponseDto<TokenDto> kakaoSimpleOld(String code) {
+        /*
+            *** 아래 링크에서 카카오 로그인 하면 회원가입/로그인 됨 ***
+            kauth.kakao.com/oauth/authorize?client_id=bdae78483f052375d4334586ceee5544&redirect_uri=http://localhost:8080/api/oauth/kakao&response_type=code
+
+            1. kauth.kakao.com/oauth/authorize로 들어가서 카카오 로그인 수행 -> 로그인 코드 반환
+            2. kapi.kakao.com/v2/user/me에서 로그인 코드 입력 -> 엑세스 토큰 반환
+            3. 엑세스 토큰으로 유저 정보 받아오기
+            4-1. DB에 없는 ID면 -> 회원가입
+            4-2. DB에 있는 ID면 -> 로그인
+         */
+
+        String kakaoAccessToken = getKakaoAccessToken(code); // 카카오 access token 받아오기
+        KakaoUserInfoDto kakaoUserInfoDto = getKakaoUserInfo(kakaoAccessToken); // 카카오 유저 정보 받아오기
+
+        // 아이디, 비밀번호 받아오기
+        String username = kakaoUserInfoDto.getKakaoId();
+        String password = passwordEncoder.encode("kakaouserpassword"); // 카카오 유저 비밀번호 임의 설정
+
+        // 회원 아이디 중복 확인 -> DB에 존재하지 않으면 회원가입 수행
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            // 입력한 username, password, admin 으로 user 객체 만들어 repository 에 저장
+            UserRoleEnum role = UserRoleEnum.USER; // 카카오 유저 ROLE 임의 설정
+            User signUpUser = User.of(LoginType.KAKAO, username, password, role);
+
+            // 토큰 생성
+            TokenDto tokenDto = new TokenDto();
+
+            String accessToken = jwtUtil.createAccessToken(signUpUser.getUsername(), signUpUser.getRole());
+            String refreshToken = jwtUtil.createRefreshToken(signUpUser.getUsername(), signUpUser.getRole());
+
+            // refresh token을 DB에 저장
+            signUpUser.setKakaoRefreshToken(refreshToken);
+            userRepository.save(signUpUser);
+
+            // response 생성
+            tokenDto.setMessage("카카오 회원가입 성공");
+            tokenDto.setAccessToken(accessToken);
+            tokenDto.setRefreshToken(refreshToken);
+
+            return ResponseUtils.ok(tokenDto, null);
+
+        } else { // DB에 존재하면 로그인 수행
+            // 토큰 생성
+            TokenDto tokenDto = new TokenDto();
+
+            String accessToken = jwtUtil.createAccessToken(user.get().getUsername(), user.get().getRole());
+            String refreshToken = jwtUtil.createRefreshToken(user.get().getUsername(), user.get().getRole());
+
+            // refresh token을 DB에 저장
+            user.get().setKakaoRefreshToken(refreshToken);
+            userRepository.save(user.get());
+
+            // response 생성
+            tokenDto.setMessage("카카오 로그인 성공");
+            tokenDto.setAccessToken(accessToken);
+            tokenDto.setRefreshToken(refreshToken);
+
+            return ResponseUtils.ok(tokenDto, null);
+        }
     }
 
 }

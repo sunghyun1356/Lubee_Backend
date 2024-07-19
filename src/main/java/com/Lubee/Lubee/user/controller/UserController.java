@@ -20,7 +20,7 @@ public class UserController {
     // kakao로그인을 통해서 유저 기록이 있으면 바로 로그인을 진행한다
     // 커플 연동에 대한 여부를 확인한 뒤 바로 회원가입을 진행한다.
     @PostMapping("/kakao")
-    public ApiResponseDto<TokenDto> kakaoLogin(@RequestParam("kakaoAccessToken") String kakaoAccessToken,
+    public ApiResponseDto<TokenDto> kakaoLogin(@RequestParam("code") String kakaoAccessToken,
                                                @RequestBody SignupDto signupDto,
                                                @RequestBody Date startDate) {
 
@@ -33,6 +33,29 @@ public class UserController {
         }
         return oAuthService.kakaoLoginOrSignup(kakaoAccessToken, signupDto, startDate);
     }
+
+    @PostMapping("/kakao/simpleLogin")
+    public ApiResponseDto<TokenDto> kakaoSimple(
+            @RequestParam("code") String kakaoAccessToken
+    )
+    {
+        if (kakaoAccessToken == null || kakaoAccessToken.isEmpty()) {
+            throw new IllegalArgumentException("Kakao access token is required");
+        }
+        return oAuthService.kakaoLoginOrSignupSimple(kakaoAccessToken);
+    }
+
+    @PostMapping("/kakao/simpleLoginOld")
+    public ApiResponseDto<TokenDto> kakaoSimpleOld(
+            @RequestParam("code") String kakaoAccessToken
+    )
+    {
+        if (kakaoAccessToken == null || kakaoAccessToken.isEmpty()) {
+            throw new IllegalArgumentException("Kakao access token is required");
+        }
+        return oAuthService.kakaoSimpleOld(kakaoAccessToken);
+    }
+
 
     @PostMapping("/kakao/refresh")
     public ApiResponseDto<TokenDto> kakaorefreshToken(
