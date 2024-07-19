@@ -71,7 +71,7 @@ public class OauthService {
             BufferedWriter bw = new BufferedWriter((new OutputStreamWriter(conn.getOutputStream()))); // 전송하기 위한 것
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=37ff99a682a47c8a4c61cd10f699a17f"); // 배포 하고 나서 설정
+            sb.append("&client_id=a42cd7bf8e59f88194582921a9886140"); // 배포 하고 나서 설정
             sb.append("&redirect_uri=http://localhost:8080/api/users/kakao/simpleLogin"); // 이부분 나중에 변경해야함
             sb.append("&client_secret=AYKKr2WWSmWqlLb7gfMPmpuvQZUDXC2G");
             sb.append("&code=").append(code);
@@ -316,7 +316,13 @@ public class OauthService {
 
             // refresh token을 DB에 저장
             signUpUser.setKakaoRefreshToken(refreshToken);
+/*
+            Couple couple = new Couple(signUpUser, null);
+            coupleRepository.save(couple);
+            signUpUser.setCouple(couple);*/
+
             userRepository.save(signUpUser);
+            System.out.println("!!!!!!! signUpUser: " + signUpUser.getId());
 
             // response 생성
             tokenDto.setMessage("카카오 회원가입 절반 성공, 온보딩으로 이동!");

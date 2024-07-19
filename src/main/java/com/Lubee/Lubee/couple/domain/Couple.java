@@ -36,8 +36,8 @@ public class Couple {
 
     private int present_honey;
 
-    @OneToMany
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToMany(mappedBy = "couple")  // 양방향 연관 관계에서 주인 설정
+    //@JoinColumn(name = "user_id", nullable = false)
     private List<User> user = new ArrayList<>();
 
     @OneToMany(mappedBy = "couple")

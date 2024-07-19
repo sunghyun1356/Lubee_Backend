@@ -31,6 +31,8 @@ public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="user_id", insertable=false, updatable=false)
+    //@Column(name = "user_id")  // 필드 이름을 명시적으로 매핑
     private Long id;
 
     @Column(nullable = false)
@@ -65,7 +67,8 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<UserCalendarMemory> userCalendarMemories;
 
-    @ManyToOne
+    //@ManyToOne
+    @ManyToOne(optional = true)
     @JoinColumn(name = "couple_id")
     private Couple couple;
 
