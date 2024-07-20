@@ -53,12 +53,10 @@ public class CoupleService {
         String lubeeCode = redisTemplate.opsForValue().get(user.getId());
         if (lubeeCode == null) {        // 기존에 lubeecode 없으면 새로 생성
             lubeeCode = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
-            //throw new RestApiException(ErrorType.LUBEE_CODE_NOT_FOUND);
+            // 저장
+            redisTemplate.opsForValue().set(user.getId(), lubeeCode, Duration.ofMinutes(LUBEE_CODE_EXPIRATION_MINUTES));
+            reverseRedisTemplate.opsForValue().set(lubeeCode, user.getId(),Duration.ofMinutes(LUBEE_CODE_EXPIRATION_MINUTES));
         }
-
-        // 저장
-        redisTemplate.opsForValue().set(user.getId(), lubeeCode, Duration.ofMinutes(LUBEE_CODE_EXPIRATION_MINUTES));
-        reverseRedisTemplate.opsForValue().set(lubeeCode, user.getId(),Duration.ofMinutes(LUBEE_CODE_EXPIRATION_MINUTES));
 
         return ResponseUtils.ok(LubeeCodeResponse.of(lubeeCode), ErrorResponse.builder().status(200).message("요청 성공").build());
     }
