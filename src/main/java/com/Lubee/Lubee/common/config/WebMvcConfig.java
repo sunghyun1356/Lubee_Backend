@@ -8,12 +8,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 public class WebMvcConfig implements WebMvcConfigurer {
+    private static final String[] ALLOWED_ORIGINS = {
+            "http://localhost:5173",
+            "http://localhost:8080",
+            "https://lubee.shop"
+    };
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("*")
-                .allowedOrigins("http://localhost:5173/**")
-                .allowedOrigins("http://localhost:5173")
+                .allowedOrigins(ALLOWED_ORIGINS)
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowedMethods("OPTIONS","GET","POST","PUT","DELETE");
