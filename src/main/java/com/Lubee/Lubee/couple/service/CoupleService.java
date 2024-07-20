@@ -123,5 +123,9 @@ public class CoupleService {
 
         return ResponseUtils.ok(couple.getId(), ErrorResponse.builder().status(200).message("커플 생성 성공").build());
     }
+    public Boolean test()
+    {
+        return Boolean.TRUE;
+    }
 
 }
