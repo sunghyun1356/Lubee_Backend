@@ -71,7 +71,7 @@ public class OauthService {
             BufferedWriter bw = new BufferedWriter((new OutputStreamWriter(conn.getOutputStream()))); // 전송하기 위한 것
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=79873accc7ee090cdaef4388ae2d9106"); // 배포 하고 나서 설정
+            sb.append("&client_id=b1301202d6b495289d802fa31dc8bd7e"); // 배포 하고 나서 설정
             sb.append("&redirect_uri=https://lubee.shop/api/users/kakao/simpleLogin"); // 이부분 나중에 변경해야함
             sb.append("&client_secret=AYKKr2WWSmWqlLb7gfMPmpuvQZUDXC2G");
             sb.append("&code=").append(code);
@@ -129,7 +129,7 @@ public class OauthService {
             URL url = new URL(reqURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod("POST");
             conn.setDoOutput(true);
             conn.setRequestProperty("Authorization", "Bearer " + accessToken); //전송할 header 작성, access_token전송
             System.out.println("conn" + conn);
