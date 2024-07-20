@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.Date;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -41,18 +39,22 @@ public class CoupleService {
     private RedisTemplate<String, Long> reverseRedisTemplate;      // key-lubeecode, value-userid
 
     /**
-     * <러비코드 생성>
+     * <러비코드 생성/조회>
      *     - 10자리의 랜덤한 코드 생성
      *     - Userid가 key인 redisTemplate 생성
      *     - lubeecode가 key인 reverseRedisTemplate 생성
      */
     @Transactional
-    public ApiResponseDto<LubeeCodeResponse> generateLubeeCode(UserDetails userDetails) {
+    public ApiResponseDto<LubeeCodeResponse> getLubeeCode(UserDetails userDetails) {
 
         final User user = userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_USER));
 
-        String lubeeCode = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        String lubeeCode = redisTemplate.opsForValue().get(user.getId());
+        if (lubeeCode == null) {        // 기존에 lubeecode 없으면 새로 생성
+            lubeeCode = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+            //throw new RestApiException(ErrorType.LUBEE_CODE_NOT_FOUND);
+        }
 
         // 저장
         redisTemplate.opsForValue().set(user.getId(), lubeeCode, Duration.ofMinutes(LUBEE_CODE_EXPIRATION_MINUTES));
@@ -66,7 +68,7 @@ public class CoupleService {
      *     - userId가 가지고 있는 러비코드 조회
      *     - 생성된 러비코드가 없을시, 에러 반환
      */
-    @Transactional(readOnly = true)
+    /*@Transactional(readOnly = true)
     public ApiResponseDto<LubeeCodeResponse> findLubeeCode(Long userid) {
 
         final User user = userRepository.findById(userid)
@@ -78,7 +80,7 @@ public class CoupleService {
         }
 
         return ResponseUtils.ok(LubeeCodeResponse.of(lubeeCode), ErrorResponse.builder().status(200).message("러비코드 조회 성공").build());
-    }
+    }*/
 
     /**
      * <커플 연동>
