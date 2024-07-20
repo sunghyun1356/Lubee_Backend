@@ -24,7 +24,7 @@ public class CalendarController {
      * @param date 꿀 정보 얻기를 원하는 날짜
      * @return ApiResponseDto<Integer>  해당 날짜의 꿀 개수
      */
-    @GetMapping("/honey/today")
+    @PostMapping("/honey/today")
     public ApiResponseDto<Integer> getTodayHoney(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam final Date date) {
@@ -38,7 +38,7 @@ public class CalendarController {
      * @param userDetails 인증된 사용자의 정보를 담고 있는 UserDetails 객체
      * @return ApiResponseDto<Long>  커플이 가진 전체 꿀 개수
      */
-    @GetMapping("/honey/total")
+    @PostMapping("/honey/total")
     public ApiResponseDto<Long> getTotalHoney(@AuthenticationPrincipal UserDetails userDetails){
 
         return calendarService.getTotalHoneyByUser(userDetails);
