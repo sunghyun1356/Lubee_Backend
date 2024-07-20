@@ -28,7 +28,7 @@ public class DateCommentController {
      * @param createDateCommentRequest 데이트코멘트 생성 요청 Dto (content, coupleId, date)
      * @return ApiResponseDto<Long>  생성된 Datecomment의 id를 포함
      */
-    @PostMapping("")
+    @PostMapping("/")
     public ApiResponseDto<Long> createDateComment(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody final CreateDateCommentRequest createDateCommentRequest){
@@ -70,7 +70,7 @@ public class DateCommentController {
      * @param updateDateCommentRequest 데이트코멘트 내용 수정 변경 요청 dto (dateCommentId, content)
      * @return SuccessResponse
      */
-    @PutMapping("")
+    @PutMapping("/")
     public SuccessResponse updateContent(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody UpdateDateCommentRequest updateDateCommentRequest){
