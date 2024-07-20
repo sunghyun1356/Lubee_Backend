@@ -51,7 +51,7 @@ public class CalendarController {
      * @param monthlyTotalHoneyRequest 원하는 년/월을 integer 값으로
      * @return ApiResponseDto<Integer>  커플이 가진 전체 꿀 개수
      */
-    @GetMapping("/honey/month")
+    @PostMapping("/honey/month")
     public ApiResponseDto<Integer> getMonthHoney(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody final MonthlyTotalHoneyRequest monthlyTotalHoneyRequest){
