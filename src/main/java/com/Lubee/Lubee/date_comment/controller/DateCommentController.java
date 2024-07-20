@@ -43,7 +43,7 @@ public class DateCommentController {
      * @return ApiResponseDto<DateCommentResponse>
      */
     /// 이거
-    @PostMapping("/{id}")
+    @GetMapping("/{id}")
     public ApiResponseDto<DateCommentResponse> findDateComment(@PathVariable final Long id){
 
         return dateCommentService.findDateComment(id);

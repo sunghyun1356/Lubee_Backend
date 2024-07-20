@@ -21,7 +21,7 @@ public class CoupleController {
      * @param userDetails 인증된 사용자의 정보를 담고 있는 UserDetails 객체
      * @return ApiResponseDto<LubeeCodeResponse>  생성된 LubeeCode의 id를 포함
      */
-    @PostMapping("/lubee-code")
+    @GetMapping("/lubee-code")
     public ApiResponseDto<LubeeCodeResponse> getLubeeCode(@AuthenticationPrincipal UserDetails userDetails){
 
         return coupleService.getLubeeCode(userDetails);
