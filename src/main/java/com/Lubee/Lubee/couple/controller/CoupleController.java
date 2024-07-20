@@ -41,11 +41,5 @@ public class CoupleController {
 
         return coupleService.linkCouple(userDetails, inputCode);
     }
-    @GetMapping("/test")
-    public Boolean test(
-    )
-    {
-        return coupleService.test();
-    }
 
 }

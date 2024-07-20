@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.util.UUID;
 
+import static java.lang.Boolean.TRUE;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -122,10 +124,6 @@ public class CoupleService {
         redisTemplate.delete(requester.getId());        // 만약 해당 key가 없어도 무시됨
 
         return ResponseUtils.ok(couple.getId(), ErrorResponse.builder().status(200).message("커플 생성 성공").build());
-    }
-    public Boolean test()
-    {
-        return Boolean.TRUE;
     }
 
 }
