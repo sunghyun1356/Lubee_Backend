@@ -4,10 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum Profile {
-    HONGDAE_YEONNAM("홍대/연남"),
-    HAPJEONG("합정"),
-    SINCHON("신촌"),
-    ETC("etc");
+    a("a"),
+    b("b"),
+    c("c"),
+    d("d");
 
     private final String displayName;
 
