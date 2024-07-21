@@ -14,11 +14,10 @@ import java.util.Optional;
 
 public interface CalendarRepository extends JpaRepository<Calendar, Long> {
 
-    Calendar findByCoupleAndEventDate(Couple couple, Date eventDate);   // 해당 날짜에 생성된 커플달력이 있는지
+    Calendar findByCoupleAndEventDate(Couple couple, Date eventDate); // 해당 날짜에 생성된 커플달력이 있는지
 
     // 커플이 해당 년/월에 생성한 Calendar를 조회
     @Query("SELECT c FROM Calendar c WHERE c.couple = :couple AND FUNCTION('YEAR', c.eventDate) = :year AND FUNCTION('MONTH', c.eventDate) = :month")
     List<Calendar> findAllByCoupleAndYearAndMonth(@Param("couple") Couple couple, @Param("year") int year, @Param("month") int month);
 
-    Page<Calendar> findAllByCoupleAndYearAndMonth(Pageable pageable, @Param("couple") Couple couple, @Param("year") int year, @Param("month") int month);
 }

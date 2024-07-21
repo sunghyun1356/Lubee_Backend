@@ -14,6 +14,6 @@ public interface CoupleRepository extends JpaRepository<Couple, Long> {
     @Query("SELECT c FROM Couple c WHERE :user IN (SELECT u FROM c.user u)")
     Optional<Couple> findCoupleByUser(@Param("user") User user);
 
-    @Query("SELECT u.profile.profielUrl FROM User u WHERE u.couple.id = :coupleId")
+    @Query("SELECT u.profile FROM User u WHERE u.couple.id = :coupleId")
     List<String> findProfilesByCoupleId(@Param("coupleId") Long coupleId);
 }

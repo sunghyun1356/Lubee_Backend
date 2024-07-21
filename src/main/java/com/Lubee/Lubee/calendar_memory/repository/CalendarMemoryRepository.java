@@ -10,6 +10,5 @@ import java.util.List;
 
 public interface CalendarMemoryRepository extends JpaRepository<CalendarMemory, Long> {
     // calendarmemory의 memory에서 date의 값 yyyy-MM-dd에서 yyyy가 같고 MM 가 맞는 것을 찾아준다. 그리고 user가 같은 것을 찾는다 .
-    @Query()
-    List<CalendarMemory> findAllByCalendarYearAndCalendarMonth(@Param("user") User user, @Param("year") Integer yaer, @Param("month")Integer month);
+
 }

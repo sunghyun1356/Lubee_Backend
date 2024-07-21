@@ -55,7 +55,7 @@ public class MemoryService {
     private final UserMemoryRepository userMemoryRepository;
     private final CoupleRepository coupleRepository;
 
-    @Value("${S3_BUCKET_NAME}")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     @Value("${cloud.aws.region.static}")
