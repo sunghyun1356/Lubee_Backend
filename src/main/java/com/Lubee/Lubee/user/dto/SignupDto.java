@@ -14,4 +14,5 @@ public class SignupDto {
     String nickname;
     Profile profile;
     Date birthday;
+    Date startDate;
 }
