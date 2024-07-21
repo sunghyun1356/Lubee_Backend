@@ -7,6 +7,7 @@ import com.Lubee.Lubee.memory.domain.Memory;
 import com.Lubee.Lubee.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,5 +31,9 @@ public class CalendarMemory extends BaseEntity {
     @JoinColumn(name = "memory_id", nullable = false)
     private Memory memory;
 
-    
+    @Builder
+    public CalendarMemory(Calendar calendar, Memory memory) {
+        this.calendar = calendar;
+        this.memory = memory;
+    }
 }

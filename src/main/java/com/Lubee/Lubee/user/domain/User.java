@@ -14,7 +14,6 @@ import com.Lubee.Lubee.user_memory_reaction.domain.UserMemoryReaction;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -108,7 +107,9 @@ public class User extends BaseEntity {
         this.alreadyCouple = true;
     }
 
-    public void UserSignup(User user, SignupDto signupDto) {
+    public void UserSignup(User user, SignupDto signupDto)
+    {
+
         user.setNickname(signupDto.getNickname());
         user.setProfile(signupDto.getProfile());
         user.setBirthday(signupDto.getBirthday());

@@ -1,8 +1,13 @@
 package com.Lubee.Lubee.calendar.controller;
 
+import com.Lubee.Lubee.calendar.dto.CalendarMemoryListDto;
 import com.Lubee.Lubee.calendar.dto.MonthlyTotalHoneyRequest;
+import com.Lubee.Lubee.calendar.repository.CalendarRepository;
 import com.Lubee.Lubee.calendar.service.CalendarService;
+import com.Lubee.Lubee.calendar_memory.service.CalendarMemoryService;
 import com.Lubee.Lubee.common.api.ApiResponseDto;
+import com.Lubee.Lubee.common.api.ResponseUtils;
+import com.Lubee.Lubee.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +21,9 @@ import java.util.Date;
 public class CalendarController {
 
     private final CalendarService calendarService;
+    private final CalendarRepository calendarRepository;
+    private final UserService userService;
+    private final CalendarMemoryService calendarMemoryService;
 
     /**
      * 오늘의 꿀 조회
@@ -58,4 +66,15 @@ public class CalendarController {
 
         return calendarService.getMonthlyHoneyByUser(userDetails, monthlyTotalHoneyRequest);
     }
+    /**
+     * year과 month를 검색하였을 때 year와 month가 일치하는 usermemory의 id를 가져와서 반환해준다. 이때의 day도 반환해준다
+     */
+    @GetMapping("total_calendar/")
+    public ApiResponseDto<CalendarMemoryListDto> getTotalCalendar(
+            @AuthenticationPrincipal UserDetails userDetails)
+    {
+        CalendarMemoryListDto totalCalendarDtoList = calendarMemoryService.getYearlyMonthlyCalenderInfo(userDetails);
+        return ResponseUtils.ok(totalCalendarDtoList, null);
+    }
+
 }

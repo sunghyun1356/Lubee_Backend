@@ -8,8 +8,10 @@ import com.Lubee.Lubee.common.exception.RestApiException;
 import com.Lubee.Lubee.couple.domain.Couple;
 import com.Lubee.Lubee.couple.dto.LubeeCodeResponse;
 import com.Lubee.Lubee.couple.repository.CoupleRepository;
+import com.Lubee.Lubee.enumset.Profile;
 import com.Lubee.Lubee.user.domain.User;
 import com.Lubee.Lubee.user.repository.UserRepository;
+import com.Lubee.Lubee.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.UUID;
+import java.util.*;
 
 import static java.lang.Boolean.TRUE;
 
@@ -33,6 +36,7 @@ public class CoupleService {
 
     private final UserRepository userRepository;
     private final CoupleRepository coupleRepository;
+    private final UserService userService;
 
     @Autowired
     private RedisTemplate<Long, String> redisTemplate;      // key-userid, value-lubeecode
@@ -125,5 +129,19 @@ public class CoupleService {
 
         return ResponseUtils.ok(couple.getId(), ErrorResponse.builder().status(200).message("커플 생성 성공").build());
     }
+    @Transactional
+    public List<Profile> getCouplesProfile(Couple couple)
+    {
+
+        return new ArrayList<Profile>(coupleRepository.findProfilesByCoupleId(couple.getId()));
+    }
+    @Transactional
+    public Couple getCoupleByUser(User user)
+    {
+        return coupleRepository.findCoupleByUser(user).
+                orElseThrow(() ->new RestApiException(ErrorType.NOT_FOUND_COUPLE));
+    }
+
+
 
 }

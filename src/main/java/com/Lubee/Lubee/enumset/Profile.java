@@ -9,10 +9,10 @@ public enum Profile {
     c("c"),
     d("d");
 
-    private final String displayName;
+    private final String ProfileName;
 
-    Profile(String displayName) {
-        this.displayName = displayName;
+    Profile(String profileName) {
+        this.ProfileName = profileName;
     }
 
 }

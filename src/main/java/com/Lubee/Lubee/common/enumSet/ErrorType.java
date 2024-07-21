@@ -30,6 +30,7 @@ import lombok.Getter;
 public enum ErrorType {
     ALREADY_EXIST(400,"해당 아이디는 사용할 수 없습니다"),
     NOT_VALID_TOKEN(400, "토큰이 유효하지 않습니다."),
+    NOT_FOUND_MEMORY(404, "해당 MEMORY가 존재하지 않습니다"),
     DUPLICATED_USERNAME(400, "중복된 username 입니다."),
     NOT_MATCHING_INFO(404, "회원을 찾을 수 없습니다."),
     NOT_MATCHING_PASSWORD(400, "비밀번호가 일치하지 않습니다."),
@@ -48,7 +49,13 @@ public enum ErrorType {
     NOT_MATCHING_COUPLE(403, "커플 정보가 알맞지 않습니다."),
     NOT_MATCHING_CALENDAR(403, "달력 정보가 알맞지 않습니다."),
     INSUFFICIENT_COMMENTS(403, "두 명의 구성원이 모두 데이트 코멘트를 작성해야 열람할 수 있습니다."),
-    NOT_FOUND_COUPLE_DATE_COMMENT(404, "커플 모두 데이트코멘트를 작성하지 않았습니다.")
+    NOT_FOUND_COUPLE_DATE_COMMENT(404, "커플 모두 데이트코멘트를 작성하지 않았습니다."),
+    NOT_FOUND_LOCATION(404, "해당 Location 데이터가 존재하지 않습니다."),
+    NOT_FOUND_USERMEMORYREACTION(404, "해당 USERMEMORYREACTION 데이터가 존재하지 않습니다."),
+    PARSING_ERROR(404, "DATE <-> STRING PARSING 에러입니다"),
+    INTERNAL_SERVER_ERROR(500, "INTERNAL_SERVER_ERROR 입니다"),
+    FILE_UPLOAD_FAILED(400, "이미지 업로드에 실패하였습니다"),
+    FILE_NOT_PROVIDED(400, "이미지 파일이 업로드 되지 않았습니다"),
     ;
 
 

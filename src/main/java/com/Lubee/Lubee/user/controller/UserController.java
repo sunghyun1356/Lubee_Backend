@@ -5,7 +5,10 @@ import com.Lubee.Lubee.common.api.SuccessResponse;
 import com.Lubee.Lubee.common.oauth.OauthService;
 import com.Lubee.Lubee.user.dto.SignupDto;
 import com.Lubee.Lubee.user.dto.TokenDto;
+import com.Lubee.Lubee.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -16,7 +19,7 @@ import java.util.Date;
 public class UserController {
 
     final private OauthService oAuthService;
-
+    final private UserService userService;
     @GetMapping("/test")
     public Boolean test()
     {
@@ -69,6 +72,14 @@ public class UserController {
             @RequestHeader(value="refreshToken") String refreshToken
     ) {
         return oAuthService.refreshKakaoToken(accessToken, refreshToken);
+    }
+    @PostMapping("/onBoarding")
+    public ApiResponseDto<SuccessResponse> onBoarding(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody SignupDto signupDto
+    )
+    {
+        return userService.onBoarding(userDetails, signupDto);
     }
 
 }
