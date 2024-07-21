@@ -30,6 +30,7 @@ import lombok.Getter;
 public enum ErrorType {
     ALREADY_EXIST(400,"해당 아이디는 사용할 수 없습니다"),
     NOT_VALID_TOKEN(400, "토큰이 유효하지 않습니다."),
+    NOT_FOUND_MEMORY(404, "해당 MEMORY가 존재하지 않습니다"),
     DUPLICATED_USERNAME(400, "중복된 username 입니다."),
     NOT_MATCHING_INFO(404, "회원을 찾을 수 없습니다."),
     NOT_MATCHING_PASSWORD(400, "비밀번호가 일치하지 않습니다."),
@@ -53,6 +54,7 @@ public enum ErrorType {
     NOT_FOUND_USERMEMORYREACTION(404, "해당 USERMEMORYREACTION 데이터가 존재하지 않습니다."),
     PARSING_ERROR(404, "DATE <-> STRING PARSING 에러입니다"),
     INTERNAL_SERVER_ERROR(500, "INTERNAL_SERVER_ERROR 입니다"),
+    FILE_UPLOAD_FAILED(400, "이미지 업로드에 실패하였습니다"),
     ;
 
 

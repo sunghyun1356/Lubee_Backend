@@ -7,10 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public interface MemoryRepository extends JpaRepository<Memory, Long> {
     @Query("SELECT m FROM Memory m WHERE m.time =:date and m.couple =:couple ")
-    Optional<Memory> findByMemoryAndUser(Date date, Couple couple);
+    List<Memory> findByMemoryAndUser(Date date, Couple couple);
 
 }

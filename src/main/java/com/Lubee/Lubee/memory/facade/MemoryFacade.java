@@ -66,7 +66,7 @@ public class MemoryFacade {
             Date today_date = formatter.parse(today_date_str);
 
             // memory에서 정보 가져오기
-            Memory memory = memoryService.getMemorybyUserAndDate(today_date, couple);
+            List<Memory> memoryList = memoryService.getMemorybyUserAndDate(today_date, couple);
 
             // 오늘 날짜 문자열 가져오기
 
@@ -74,7 +74,7 @@ public class MemoryFacade {
             long loveDays = memoryService.getLoveDays(couple.getStartDate());
 
             // 유저의 꿀 개수 계산
-            int honey = (int) (calendarService.getTotalHoney(user) / 5);
+            int honey = memoryList.size();
 
             // 커플 프로필 정보 가져오기
             List<Profile> profileList = coupleService.getCouplesProfile(couple);
@@ -109,9 +109,11 @@ public class MemoryFacade {
 
     public ApiResponseDto<SuccessResponse> createMemory(UserDetails loginUser, MemoryCreateRequestDto memoryCreateRequestDto)
     {
+
+        // memory 생성, calendar 도 생성, memory_calendar도 생성해준다
         User user = userService.getUser(loginUser);
         Couple couple = coupleService.getCoupleByUser(user);
-        couple.setTotal_honey(couple.getTotal_honey()-1);
+        couple.setTotal_honey(couple.getTotal_honey()+1);
         coupleRepository.save(couple);
         memoryService.createMemory(loginUser, memoryCreateRequestDto);
         return ResponseUtils.ok(SuccessResponse.of(HttpStatus.OK, "Memory삭제가 완료되었습니다"), ErrorResponse.builder().status(200).message("요청 성공").build());

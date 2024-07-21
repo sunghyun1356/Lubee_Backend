@@ -1,7 +1,9 @@
 package com.Lubee.Lubee.memory.service;
 
 import com.Lubee.Lubee.calendar.domain.Calendar;
+import com.Lubee.Lubee.calendar.repository.CalendarRepository;
 import com.Lubee.Lubee.calendar_memory.domain.CalendarMemory;
+import com.Lubee.Lubee.calendar_memory.repository.CalendarMemoryRepository;
 import com.Lubee.Lubee.common.enumSet.ErrorType;
 import com.Lubee.Lubee.common.exception.RestApiException;
 import com.Lubee.Lubee.couple.domain.Couple;
@@ -25,6 +27,7 @@ import com.Lubee.Lubee.user_memory_reaction.repository.UserMemoryReactionReposit
 import com.Lubee.Lubee.user_memory_reaction.service.UserMemoryReactionService;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +42,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -48,13 +52,14 @@ public class MemoryService {
     private final LocationService locationService;
     private final MemoryRepository memoryRepository;
     private final UserMemoryReactionService userMemoryReactionService;
-    private final UserCalendarMemoryRepository userCalendarMemoryRepository;
     private final UserMemoryReactionRepository userMemoryReactionRepository;
     private final AmazonS3Client amazonS3Client;
     private final UserRepository userRepository;
     private final UserMemoryRepository userMemoryRepository;
     private final CoupleRepository coupleRepository;
-
+    private final CalendarRepository calendarRepository;
+    private final CalendarMemoryRepository calendarMemoryRepository;
+    private final UserCalendarMemoryRepository userCalendarMemoryRepository;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -108,20 +113,15 @@ public class MemoryService {
                 }
             }
 
-            MemoryBaseDto memoryBaseDto = MemoryBaseDto.of(userCalendarMemory.getUser().getId(), location_name, picture, profile, reaction1, reaction2);
+            MemoryBaseDto memoryBaseDto = MemoryBaseDto.of(memory.getMemory_id(), userCalendarMemory.getUser().getId(), location_name, picture, profile, reaction1, reaction2);
             memoryBaseDtoArrayList.add(memoryBaseDto);
         }
 
         return memoryBaseDtoArrayList;
     }
 
-    public Memory getMemorybyUserAndDate(Date date, Couple couple) {
-        return memoryRepository.findByMemoryAndUser(date, couple).orElseThrow(
-                () -> new RestApiException(ErrorType.NOT_FOUND_USER)
-        );
-    }
-    public void createMemory(UserDetails loginUser, MemoryCreateRequestDto memoryRequest)
-    {
+    @Transactional
+    public void createMemory(UserDetails loginUser, MemoryCreateRequestDto memoryRequest) {
         // 사용자 정보 가져오기
         User user = userRepository.findByUsername(loginUser.getUsername()).orElseThrow(
                 () -> new RestApiException(ErrorType.NOT_FOUND_USER)
@@ -130,16 +130,15 @@ public class MemoryService {
                 () -> new RestApiException(ErrorType.NOT_FOUND_COUPLE)
         );
 
-        try{
+        try {
             // 파일 업로드 처리
             String fileName = memoryRequest.getPicture().getOriginalFilename();
             String folder = "/pictures"; // 저장할 폴더
-            String fileUrl= "https://" + bucket + ".s3." + region + ".amazonaws.com" + folder + "/" + fileName;
-            ObjectMetadata metadata= new ObjectMetadata();
+            String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com" + folder + "/" + fileName;
+            ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(memoryRequest.getPicture().getContentType());
             metadata.setContentLength(memoryRequest.getPicture().getSize());
             amazonS3Client.putObject(bucket + folder, fileName, memoryRequest.getPicture().getInputStream(), metadata);
-
 
             // 메모리 객체 생성 및 저장
             Memory memory = new Memory();
@@ -150,16 +149,42 @@ public class MemoryService {
             memory.setCouple(couple);
 
             memory = memoryRepository.save(memory);
-        } catch (IOException e)
-        {
+
+            // Calendar 존재 확인 및 생성
+            Date eventDate = memoryRequest.getTime(); // Memory의 시간을 이벤트 날짜로 사용
+            Calendar calendar = calendarRepository.findByCoupleAndEventDate(couple, eventDate);
+            if (calendar == null)
+            {
+                calendar = Calendar.builder()
+                        .couple(couple)
+                        .eventDate(eventDate)
+                        .build();
+                calendar = calendarRepository.save(calendar);
+            }
+
+            // CalendarMemory 생성 및 저장
+            CalendarMemory calendarMemory = CalendarMemory.builder()
+                    .calendar(calendar)
+                    .memory(memory)
+                    .build();
+            calendarMemoryRepository.save(calendarMemory);
+
+            // UserMemory 생성 및 저장
+            UserMemory userMemory = UserMemory.of(user, memory);
+            userMemoryRepository.save(userMemory);
+
+            // UserCalendarMemory 생성 및 저장
+            UserCalendarMemory userCalendarMemory = UserCalendarMemory.of(user, calendarMemory);
+            userCalendarMemoryRepository.save(userCalendarMemory);
+
+            couple.setTotal_honey(couple.getTotal_honey()+1);
+            coupleRepository.save(couple);
+
+        } catch (IOException e) {
             e.printStackTrace();
+            throw new RestApiException(ErrorType.FILE_UPLOAD_FAILED);
         }
-
     }
-
-
-
-
     public MemoryBaseDto getOneMemory(UserDetails loginUser, Long memoryId) {
         User user = userRepository.findByUsername(loginUser.getUsername()).orElseThrow(
                 () -> new RestApiException(ErrorType.NOT_FOUND)
@@ -183,6 +208,7 @@ public class MemoryService {
         // MemoryBaseDto 생성
         Profile userProfile = user.getProfile();
         return MemoryBaseDto.of(
+                memory.getMemory_id(),
                 user.getId(),
                 memory.getLocationName(),
                 memory.getPicture(),
@@ -190,6 +216,9 @@ public class MemoryService {
                 reaction1,
                 reaction2
         );
+    }
+    public List<Memory> getMemorybyUserAndDate(Date date, Couple couple) {
+        return memoryRepository.findByMemoryAndUser(date, couple);
     }
 
 

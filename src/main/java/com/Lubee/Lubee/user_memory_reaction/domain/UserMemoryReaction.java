@@ -31,4 +31,14 @@ public class UserMemoryReaction extends BaseEntity {
     private Memory memory;
 
     private Reaction reaction;
+
+    public static UserMemoryReaction of(User user, Memory memory, Reaction reaction) {
+        UserMemoryReaction userMemoryReaction = new UserMemoryReaction();
+        userMemoryReaction.setUser(user);
+        userMemoryReaction.setMemory(memory);
+        userMemoryReaction.setReaction(reaction);
+        return userMemoryReaction;
+    }
+
+
 }
