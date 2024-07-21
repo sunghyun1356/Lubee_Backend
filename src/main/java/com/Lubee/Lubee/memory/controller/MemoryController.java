@@ -29,15 +29,15 @@ public class MemoryController {
     {
         return memoryFacade.createMemory(loginUser, memoryRequest);
     }
-    @GetMapping("/memory/{memory_id}")
-    public ApiResponseDto<MemoryBaseDto>getOneMemory(@AuthenticationPrincipal UserDetails loginUser, Long memoryId)
+    @GetMapping("/{memory_id}")
+    public ApiResponseDto<MemoryBaseDto>getOneMemory(@AuthenticationPrincipal UserDetails loginUser, Long memory_id)
     {
-        return memoryFacade.getOneMemory(loginUser, memoryId);
+        return memoryFacade.getOneMemory(loginUser, memory_id);
     }
-    @DeleteMapping("/memory/{memory_id}")
-    public ApiResponseDto<SuccessResponse>deleteOneMemory(@AuthenticationPrincipal UserDetails loginUser, Long memoryId)
+    @DeleteMapping("/{memory_id}")
+    public ApiResponseDto<SuccessResponse>deleteOneMemory(@AuthenticationPrincipal UserDetails loginUser, Long memory_id)
     {
-        return memoryFacade.deleteMemory(loginUser, memoryId);
+        return memoryFacade.deleteMemory(loginUser, memory_id);
     }
 
 }
