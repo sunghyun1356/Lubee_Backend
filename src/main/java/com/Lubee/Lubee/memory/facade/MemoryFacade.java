@@ -13,6 +13,7 @@ import com.Lubee.Lubee.couple.repository.CoupleRepository;
 import com.Lubee.Lubee.couple.service.CoupleService;
 import com.Lubee.Lubee.date_comment.dto.DateCommentBaseDto;
 import com.Lubee.Lubee.date_comment.service.DateCommentService;
+import com.Lubee.Lubee.enumset.Profile;
 import com.Lubee.Lubee.memory.domain.Memory;
 import com.Lubee.Lubee.memory.dto.HomeDto;
 import com.Lubee.Lubee.memory.dto.MemoryBaseDto;
@@ -76,7 +77,7 @@ public class MemoryFacade {
             int honey = (int) (calendarService.getTotalHoney(user) / 5);
 
             // 커플 프로필 정보 가져오기
-            List<String> profileList = coupleService.getCouplesProfile(couple);
+            List<Profile> profileList = coupleService.getCouplesProfile(couple);
 
             // 커플과 캘린더로 데이트 코멘트 조회
             List<DateCommentBaseDto> dateCommentBaseDtos = dateCommentService.getDateCommentsByCoupleAndCalendar(couple, today_date);

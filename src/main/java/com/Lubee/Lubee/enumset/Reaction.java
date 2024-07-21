@@ -1,5 +1,8 @@
 package com.Lubee.Lubee.enumset;
 
+import lombok.Getter;
+
+@Getter
 public enum Reaction {
         LIKE("기쁨"),
         LOVE("사랑"),
@@ -7,11 +10,11 @@ public enum Reaction {
         SAD("슬픔"),
         ANGRY("화남");
 
-        private final String displayName;
+        private final String ReactionName;
 
-        Reaction(String displayName)
+        Reaction(String reactionName)
         {
-                this.displayName = displayName;
+                this.ReactionName = reactionName;
         }
 
 

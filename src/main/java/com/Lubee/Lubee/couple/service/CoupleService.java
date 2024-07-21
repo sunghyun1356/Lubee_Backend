@@ -8,6 +8,7 @@ import com.Lubee.Lubee.common.exception.RestApiException;
 import com.Lubee.Lubee.couple.domain.Couple;
 import com.Lubee.Lubee.couple.dto.LubeeCodeResponse;
 import com.Lubee.Lubee.couple.repository.CoupleRepository;
+import com.Lubee.Lubee.enumset.Profile;
 import com.Lubee.Lubee.user.domain.User;
 import com.Lubee.Lubee.user.repository.UserRepository;
 import com.Lubee.Lubee.user.service.UserService;
@@ -129,10 +130,10 @@ public class CoupleService {
         return ResponseUtils.ok(couple.getId(), ErrorResponse.builder().status(200).message("커플 생성 성공").build());
     }
     @Transactional
-    public List<String> getCouplesProfile(Couple couple)
+    public List<Profile> getCouplesProfile(Couple couple)
     {
 
-        return (ArrayList<String>) coupleRepository.findProfilesByCoupleId(couple.getId());
+        return new ArrayList<Profile>(coupleRepository.findProfilesByCoupleId(couple.getId()));
     }
     @Transactional
     public Couple getCoupleByUser(User user)

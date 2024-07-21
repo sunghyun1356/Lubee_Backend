@@ -9,10 +9,10 @@ public enum Spot {
     SINCHON("신촌"),
     ETC("etc");
 
-    private final String displayName;
+    private final String SpotName;
 
-    Spot(String displayName) {
-        this.displayName = displayName;
+    Spot(String spotName) {
+        this.SpotName = spotName;
     }
 
 }

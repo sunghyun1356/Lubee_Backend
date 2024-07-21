@@ -9,10 +9,10 @@ public enum Category {
     CULTURE("문화"),
     ETC("etc");
 
-    private final String displayName;
+    private final String CategoryName;
 
-    Category(String displayName) {
-        this.displayName = displayName;
+    Category(String categoryName) {
+        this.CategoryName = categoryName;
     }
 
 }
