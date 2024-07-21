@@ -32,8 +32,6 @@ public class Memory extends BaseEntity {
 
     private String content;
 
-    private String locationName;
-
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date time;

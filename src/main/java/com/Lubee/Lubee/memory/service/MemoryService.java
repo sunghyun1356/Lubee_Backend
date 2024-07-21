@@ -11,6 +11,7 @@ import com.Lubee.Lubee.couple.repository.CoupleRepository;
 import com.Lubee.Lubee.enumset.Profile;
 import com.Lubee.Lubee.enumset.Reaction;
 import com.Lubee.Lubee.location.domain.Location;
+import com.Lubee.Lubee.location.repository.LocationRepository;
 import com.Lubee.Lubee.location.service.LocationService;
 import com.Lubee.Lubee.memory.domain.Memory;
 import com.Lubee.Lubee.memory.dto.MemoryBaseDto;
@@ -33,8 +34,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -60,6 +63,8 @@ public class MemoryService {
     private final CalendarRepository calendarRepository;
     private final CalendarMemoryRepository calendarMemoryRepository;
     private final UserCalendarMemoryRepository userCalendarMemoryRepository;
+    private final LocationRepository locationRepository;
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -130,59 +135,73 @@ public class MemoryService {
                 () -> new RestApiException(ErrorType.NOT_FOUND_COUPLE)
         );
 
-        try {
-            // 파일 업로드 처리
-            String fileName = memoryRequest.getPicture().getOriginalFilename();
-            String folder = "/pictures"; // 저장할 폴더
-            String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com" + folder + "/" + fileName;
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(memoryRequest.getPicture().getContentType());
-            metadata.setContentLength(memoryRequest.getPicture().getSize());
-            amazonS3Client.putObject(bucket + folder, fileName, memoryRequest.getPicture().getInputStream(), metadata);
+        // 파일 업로드 처리
+        MultipartFile picture = memoryRequest.getPicture();
+        if (picture != null && !picture.isEmpty()) {
+            try {
+                String fileName = picture.getOriginalFilename();
+                String folder = "/pictures"; // 저장할 폴더
+                String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com" + folder + "/" + fileName;
 
-            // 메모리 객체 생성 및 저장
-            Memory memory = new Memory();
-            memory.setContent(memoryRequest.getContent());
-            memory.setLocationName(memoryRequest.getLocationName());
-            memory.setTime(memoryRequest.getTime());
-            memory.setPicture(fileUrl);
-            memory.setCouple(couple);
+                // S3에 파일 업로드
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentType(picture.getContentType());
+                metadata.setContentLength(picture.getSize());
+                amazonS3Client.putObject(bucket + folder, fileName, picture.getInputStream(), metadata);
 
-            memory = memoryRepository.save(memory);
+                // Location 찾기
+                Location location = locationRepository.findById(memoryRequest.getLocation_id()).orElseThrow(
+                        () -> new RestApiException(ErrorType.NOT_FOUND_LOCATION)
+                );
 
-            // Calendar 존재 확인 및 생성
-            Date eventDate = memoryRequest.getTime(); // Memory의 시간을 이벤트 날짜로 사용
-            Calendar calendar = calendarRepository.findByCoupleAndEventDate(couple, eventDate);
-            if (calendar == null)
-            {
-                calendar = Calendar.builder()
-                        .couple(couple)
-                        .eventDate(eventDate)
+                // 오늘 날짜를 가져옵니다.
+                Date today = new Date();
+
+                // 메모리 객체 생성 및 저장
+                Memory memory = new Memory();
+                memory.setContent(memoryRequest.getContent());
+                memory.setLocation(location);
+                memory.setTime(today); // 현재 날짜 설정
+                memory.setPicture(fileUrl);
+                memory.setCouple(couple);
+
+                memory = memoryRepository.save(memory);
+
+                // Calendar 존재 확인 및 생성
+                Calendar calendar = calendarRepository.findByCoupleAndEventDate(couple, today);
+                if (calendar == null) {
+                    calendar = Calendar.builder()
+                            .couple(couple)
+                            .eventDate(today)
+                            .build();
+                    calendar = calendarRepository.save(calendar);
+                }
+
+                // CalendarMemory 생성 및 저장
+                CalendarMemory calendarMemory = CalendarMemory.builder()
+                        .calendar(calendar)
+                        .memory(memory)
                         .build();
-                calendar = calendarRepository.save(calendar);
+                calendarMemoryRepository.save(calendarMemory);
+
+                // UserMemory 생성 및 저장
+                UserMemory userMemory = UserMemory.of(user, memory);
+                userMemoryRepository.save(userMemory);
+
+                // UserCalendarMemory 생성 및 저장
+                UserCalendarMemory userCalendarMemory = UserCalendarMemory.of(user, calendarMemory);
+                userCalendarMemoryRepository.save(userCalendarMemory);
+
+                // 커플의 총 허니를 증가시키고 저장
+                couple.setTotal_honey(couple.getTotal_honey() + 1);
+                coupleRepository.save(couple);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RestApiException(ErrorType.FILE_UPLOAD_FAILED);
             }
-
-            // CalendarMemory 생성 및 저장
-            CalendarMemory calendarMemory = CalendarMemory.builder()
-                    .calendar(calendar)
-                    .memory(memory)
-                    .build();
-            calendarMemoryRepository.save(calendarMemory);
-
-            // UserMemory 생성 및 저장
-            UserMemory userMemory = UserMemory.of(user, memory);
-            userMemoryRepository.save(userMemory);
-
-            // UserCalendarMemory 생성 및 저장
-            UserCalendarMemory userCalendarMemory = UserCalendarMemory.of(user, calendarMemory);
-            userCalendarMemoryRepository.save(userCalendarMemory);
-
-            couple.setTotal_honey(couple.getTotal_honey()+1);
-            coupleRepository.save(couple);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RestApiException(ErrorType.FILE_UPLOAD_FAILED);
+        } else {
+            throw new RestApiException(ErrorType.FILE_NOT_PROVIDED);
         }
     }
     public MemoryBaseDto getOneMemory(UserDetails loginUser, Long memoryId) {
@@ -207,10 +226,11 @@ public class MemoryService {
 
         // MemoryBaseDto 생성
         Profile userProfile = user.getProfile();
+        Location location = memory.getLocation();
         return MemoryBaseDto.of(
                 memory.getMemory_id(),
                 user.getId(),
-                memory.getLocationName(),
+                location.getName(),
                 memory.getPicture(),
                 userProfile,// 로그인 유저의 프로필 정보를 가져와서 설정
                 reaction1,

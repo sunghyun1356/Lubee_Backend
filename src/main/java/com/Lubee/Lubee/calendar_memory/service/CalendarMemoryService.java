@@ -11,6 +11,8 @@ import com.Lubee.Lubee.couple.domain.Couple;
 import com.Lubee.Lubee.couple.repository.CoupleRepository;
 import com.Lubee.Lubee.enumset.Profile;
 import com.Lubee.Lubee.enumset.Reaction;
+import com.Lubee.Lubee.location.domain.Location;
+import com.Lubee.Lubee.location.repository.LocationRepository;
 import com.Lubee.Lubee.memory.domain.Memory;
 import com.Lubee.Lubee.memory.dto.MemoryBaseDto;
 import com.Lubee.Lubee.user.domain.User;
@@ -43,6 +45,7 @@ public class CalendarMemoryService {
     private final UserRepository userRepository;
     private final UserMemoryReactionRepository userMemoryReactionRepository;
     private final UserCalendarMemoryRepository userCalendarMemoryRepository;
+    private final LocationRepository locationRepository;
     public CalendarMemoryListDto getYearlyMonthlyCalenderInfo(UserDetails loginUser) {
         User user = userRepository.findByUsername(loginUser.getUsername()).orElseThrow(
                 () -> new RestApiException(ErrorType.NOT_FOUND_USER)
@@ -92,11 +95,14 @@ public class CalendarMemoryService {
                             i++;
                         }
                     }
-
+                    Location location = locationRepository.findById(memory.getLocation().getLocation_id()).orElseThrow(
+                            () -> new RestApiException(ErrorType.NOT_FOUND_LOCATION)
+                    );
+                    String locationName = location.getName();
                     MemoryBaseDto memoryBaseDto = MemoryBaseDto.of(
                             memory.getMemory_id(),
                             memory.getUserMemory().getUser().getId(),
-                            memory.getLocationName(),
+                            locationName,
                             memory.getPicture(),
                             memory.getUserMemory().getUser().getProfile(),
                             reaction1,

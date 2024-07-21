@@ -13,9 +13,7 @@ import java.util.Date;
 @Getter
 public class MemoryCreateRequestDto {
     String content;
-    String locationName;
-    Date time;
+    Long location_id;
     MultipartFile picture;
     Long couple_id;
-    MultipartFile file;
 }

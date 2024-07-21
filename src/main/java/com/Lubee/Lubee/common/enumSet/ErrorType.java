@@ -55,6 +55,7 @@ public enum ErrorType {
     PARSING_ERROR(404, "DATE <-> STRING PARSING 에러입니다"),
     INTERNAL_SERVER_ERROR(500, "INTERNAL_SERVER_ERROR 입니다"),
     FILE_UPLOAD_FAILED(400, "이미지 업로드에 실패하였습니다"),
+    FILE_NOT_PROVIDED(400, "이미지 파일이 업로드 되지 않았습니다"),
     ;
 
 

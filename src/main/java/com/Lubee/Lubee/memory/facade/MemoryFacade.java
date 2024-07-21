@@ -116,7 +116,7 @@ public class MemoryFacade {
         couple.setTotal_honey(couple.getTotal_honey()+1);
         coupleRepository.save(couple);
         memoryService.createMemory(loginUser, memoryCreateRequestDto);
-        return ResponseUtils.ok(SuccessResponse.of(HttpStatus.OK, "Memory삭제가 완료되었습니다"), ErrorResponse.builder().status(200).message("요청 성공").build());
+        return ResponseUtils.ok(SuccessResponse.of(HttpStatus.OK, "Memory 생성이 완료되었습니다"), ErrorResponse.builder().status(200).message("요청 성공").build());
     }
 
     public ApiResponseDto<MemoryBaseDto> getOneMemory(UserDetails loginUser, Long memoryId)
