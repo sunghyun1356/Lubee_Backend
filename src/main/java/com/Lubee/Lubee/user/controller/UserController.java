@@ -17,6 +17,12 @@ public class UserController {
 
     final private OauthService oAuthService;
 
+    @GetMapping("/test")
+    public Boolean test()
+    {
+        return oAuthService.test();
+    }
+
     // kakao로그인을 통해서 유저 기록이 있으면 바로 로그인을 진행한다
     // 커플 연동에 대한 여부를 확인한 뒤 바로 회원가입을 진행한다.
     @PostMapping("/kakao")

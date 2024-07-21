@@ -49,6 +49,10 @@ public class OauthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    public Boolean test()
+    {
+        return Boolean.FALSE;
+    }
     /*
         카카오 로그인
      */

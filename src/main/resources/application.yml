@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://lubee2.cjy6c68ea7sc.ap-northeast-2.rds.amazonaws.com:3306/Lubee
+    url: jdbc:mysql://${mysql_endpoint}}/Lubee
     username: root
     password: ${mysql_pw}
     driver-class-name: com.mysql.cj.jdbc.Driver
