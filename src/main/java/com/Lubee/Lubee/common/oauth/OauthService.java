@@ -291,7 +291,6 @@ public class OauthService {
         return ResponseUtils.ok(tokenDto, null);
     }
 
-
     @Transactional
     public ApiResponseDto<TokenDto> kakaoLoginOrSignupSimple(String code) {
 

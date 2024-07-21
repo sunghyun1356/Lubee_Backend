@@ -22,4 +22,14 @@ public class UserMemory {
     @ManyToOne
     @JoinColumn(name = "memory_id")
     private Memory memory;
+
+    public UserMemory(User user, Memory memory) {
+        this.user = user;
+        this.memory = memory;
+    }
+
+    // of 메서드 정의
+    public static UserMemory of(User user, Memory memory) {
+        return new UserMemory(user, memory);
+    }
 }
