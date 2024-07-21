@@ -108,7 +108,7 @@ public class MemoryService {
                 }
             }
 
-            MemoryBaseDto memoryBaseDto = MemoryBaseDto.of(location_name, picture, profile, reaction1, reaction2);
+            MemoryBaseDto memoryBaseDto = MemoryBaseDto.of(userCalendarMemory.getUser().getId(), location_name, picture, profile, reaction1, reaction2);
             memoryBaseDtoArrayList.add(memoryBaseDto);
         }
 
@@ -183,6 +183,7 @@ public class MemoryService {
         // MemoryBaseDto 생성
         Profile userProfile = user.getProfile();
         return MemoryBaseDto.of(
+                user.getId(),
                 memory.getLocationName(),
                 memory.getPicture(),
                 userProfile,// 로그인 유저의 프로필 정보를 가져와서 설정
