@@ -15,7 +15,7 @@ public class MyAppStartUpRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         System.out.println("MyAppStartUpRunner...");
         System.out.println("loadCultureLocation...");
-        locationApiClient.loadCultureLocation();
+        //locationApiClient.loadCultureLocation();
         //System.out.println("loadRestaurantLocation...");
         //locationApiClient.loadRestaurantLocation();
         System.out.println("MyAppStartUpRunner - FINISHED");
