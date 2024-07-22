@@ -16,6 +16,8 @@ spring:
     redis:
       host: ${redis_endpoint}
       port: 6379
+      repositories:
+        enabled: false      # redis repo 사용x
   sql:
     init:
       mode: always
@@ -31,8 +33,13 @@ cloud:
     credentials:
       access-key: ${s3_access_key}
       secret-key: ${s3_secret_key}
-JWT_TOKEN : ${jwt_token}
 
+management:
+  health:
+    redis:
+      enabled: false        # 우선 redis health check 막기
+
+JWT_TOKEN : ${jwt_token}
 RESTAURANT_API_KEY : ${restaurant_api_key}
 CULTURE_API_KEY : ${culture_api_key}
 
