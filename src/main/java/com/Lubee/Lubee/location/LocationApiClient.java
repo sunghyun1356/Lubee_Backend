@@ -1,10 +1,14 @@
 package com.Lubee.Lubee.location;
 
+import com.Lubee.Lubee.enumset.Category;
 import com.Lubee.Lubee.location.dto.SeoulLocationInfo;
+import com.Lubee.Lubee.location.mapper.LocationMapper;
+import com.Lubee.Lubee.location.repository.LocationRepository;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +38,11 @@ public class LocationApiClient {
     private int nData_cul = 0;
     private Long totalData_cul = 0L;
     private Long totalLocations_cul = 0L;
+
+    @Autowired
+    private LocationRepository locationRepository;
+    @Autowired
+    private LocationMapper locationMapper;
 
     /**
      * 서울시 일반 음식점
@@ -98,8 +107,10 @@ public class LocationApiClient {
                         .parcelBaseAddress(jsonOb.get("RDNWHLADDR").toString()) //도로명 주소
                         .x_coord(jsonOb.get("X").toString())
                         .y_coord(jsonOb.get("Y").toString())
+                        .category(Category.RESTAURANT)
                         .build();
                 seoulLocationInfoList.add(seoulLocationInfo);
+                //locationRepository.save(locationMapper.toEntity(seoulLocationInfo));
             }
             nData_res = seoulLocationInfoList.size();
             totalData_res += nData_res;
@@ -131,7 +142,7 @@ public class LocationApiClient {
                     result.append(returnLine).append("\n\r");
                 }
                 saveCultureLocation(result.toString());           // jsonParser 이용 후 DB 저장
-                //System.out.println("totalData :  " + totalData_cul);
+                System.out.println("!!!!  totalData of culture :  " + totalData_cul);
 
                 if (nextFinished) {
                     break;
@@ -169,9 +180,13 @@ public class LocationApiClient {
                         .parcelBaseAddress(jsonOb.get("ADDR").toString()) // 주소
                         .x_coord(jsonOb.get("X_COORD").toString())
                         .y_coord(jsonOb.get("Y_COORD").toString())
+                        .category(Category.CULTURE)
                         .build();
                 seoulLocationInfoList.add(seoulLocationInfo);
                 //System.out.println("SeoulLocationInfo :  " + seoulLocationInfo.getName());
+
+                // DB 저장
+                locationRepository.save(locationMapper.toEntity(seoulLocationInfo));
             }
             nData_cul = seoulLocationInfoList.size();
             totalData_cul += nData_cul;

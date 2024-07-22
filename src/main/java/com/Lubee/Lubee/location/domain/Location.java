@@ -4,16 +4,16 @@ import com.Lubee.Lubee.enumset.Category;
 import com.Lubee.Lubee.enumset.Spot;
 import com.Lubee.Lubee.memory.domain.Memory;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.geo.Point;
 
 import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Location {
 
     @Id
