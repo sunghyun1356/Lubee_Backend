@@ -30,6 +30,7 @@ public class Memory extends BaseEntity {
     private Long memory_id;
 
 
+    @Column(nullable = true)
     private String content;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")

@@ -161,7 +161,6 @@ public class MemoryService {
 
                 // 메모리 객체 생성 및 저장
                 Memory memory = new Memory();
-                memory.setContent(memoryRequest.getContent());
                 memory.setLocation(location);
                 memory.setTime(today); // 현재 날짜 설정
                 memory.setPicture(fileUrl);
