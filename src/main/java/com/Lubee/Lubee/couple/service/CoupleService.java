@@ -1,11 +1,15 @@
 package com.Lubee.Lubee.couple.service;
 
+import com.Lubee.Lubee.anniversary.dto.AnniversaryListDto;
+import com.Lubee.Lubee.anniversary.repository.AnniversaryRepository;
+import com.Lubee.Lubee.anniversary.service.AnniversaryService;
 import com.Lubee.Lubee.common.api.ApiResponseDto;
 import com.Lubee.Lubee.common.api.ErrorResponse;
 import com.Lubee.Lubee.common.api.ResponseUtils;
 import com.Lubee.Lubee.common.enumSet.ErrorType;
 import com.Lubee.Lubee.common.exception.RestApiException;
 import com.Lubee.Lubee.couple.domain.Couple;
+import com.Lubee.Lubee.couple.dto.CoupleInfoDto;
 import com.Lubee.Lubee.couple.dto.LubeeCodeResponse;
 import com.Lubee.Lubee.couple.repository.CoupleRepository;
 import com.Lubee.Lubee.enumset.Profile;
@@ -37,6 +41,7 @@ public class CoupleService {
     private final UserRepository userRepository;
     private final CoupleRepository coupleRepository;
     private final UserService userService;
+    private final AnniversaryService anniversaryService;
 
     @Autowired
     private RedisTemplate<Long, String> redisTemplate;      // key-userid, value-lubeecode
@@ -140,6 +145,33 @@ public class CoupleService {
     {
         return coupleRepository.findCoupleByUser(user).
                 orElseThrow(() ->new RestApiException(ErrorType.NOT_FOUND_COUPLE));
+    }
+
+    @Transactional
+    public ApiResponseDto<CoupleInfoDto> getCoupleInfo(UserDetails loginUser)
+    {
+        User user = userRepository.findUserByUsername(loginUser.getUsername()).orElseThrow(
+                () -> new RestApiException(ErrorType.NOT_FOUND_USER)
+        );
+        Couple couple = coupleRepository.findCoupleByUser(user).orElseThrow(
+                () -> new RestApiException(ErrorType.NOT_FOUND_COUPLE)
+        );
+        User user_second = userRepository.findRestUser(user, couple).orElseThrow(
+                () -> new RestApiException(ErrorType.NOT_FOUND_USER)
+        );
+        AnniversaryListDto anniversaryListDto = anniversaryService.getAnniversaryInfo(couple);
+        CoupleInfoDto coupleInfoDto = CoupleInfoDto.of(
+                user.getNickname(),
+                user.getProfile(),
+                user_second.getNickname(),
+                user_second.getProfile(),
+                user.getBirthday(),
+                user.getBirthday(),
+                anniversaryListDto
+
+        );
+
+        return ResponseUtils.ok(coupleInfoDto, null);
     }
 
 

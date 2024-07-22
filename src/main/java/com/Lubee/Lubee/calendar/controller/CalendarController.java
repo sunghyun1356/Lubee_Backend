@@ -1,6 +1,7 @@
 package com.Lubee.Lubee.calendar.controller;
 
-import com.Lubee.Lubee.calendar.dto.CalendarMemoryListDto;
+import com.Lubee.Lubee.calendar.dto.CalendarMemoryDayDto;
+import com.Lubee.Lubee.calendar.dto.CalendarMemoryTotalListDto;
 import com.Lubee.Lubee.calendar.dto.MonthlyTotalHoneyRequest;
 import com.Lubee.Lubee.calendar.repository.CalendarRepository;
 import com.Lubee.Lubee.calendar.service.CalendarService;
@@ -70,11 +71,18 @@ public class CalendarController {
      * year과 month를 검색하였을 때 year와 month가 일치하는 usermemory의 id를 가져와서 반환해준다. 이때의 day도 반환해준다
      */
     @GetMapping("total_calendar/")
-    public ApiResponseDto<CalendarMemoryListDto> getTotalCalendar(
+    public ApiResponseDto<CalendarMemoryTotalListDto> getTotalCalendar(
             @AuthenticationPrincipal UserDetails userDetails)
     {
-        CalendarMemoryListDto totalCalendarDtoList = calendarMemoryService.getYearlyMonthlyCalenderInfo(userDetails);
+        CalendarMemoryTotalListDto totalCalendarDtoList = calendarMemoryService.getYearlyMonthlyCalendarInfo(userDetails);
         return ResponseUtils.ok(totalCalendarDtoList, null);
+    }
+    @GetMapping("specific_calendar/")
+    public ApiResponseDto<CalendarMemoryDayDto> getSpecificCalendar(
+            @AuthenticationPrincipal UserDetails userDetails, @RequestParam int year, @RequestParam int month, @RequestParam int day)
+    {
+        CalendarMemoryDayDto calendarMemoryDayDto = calendarMemoryService.getDayCalendarInfo(userDetails, year, month, day);
+        return ResponseUtils.ok(calendarMemoryDayDto, null);
     }
 
 }

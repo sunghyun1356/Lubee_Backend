@@ -17,8 +17,9 @@ public class MemoryBaseDto {
     private Profile writer_profile;
     private Reaction reaction1;
     private Reaction reaction2;
+    private String upload_time;
 
-    public MemoryBaseDto(Long memory_id, Long user_id, String location_name, String picture, Profile writer_profile, Reaction reaction1, Reaction reaction2)
+    public MemoryBaseDto(Long memory_id, Long user_id, String location_name, String picture, Profile writer_profile, Reaction reaction1, Reaction reaction2, String upload_time)
     {
         this.memory_id = memory_id;
         this.user_id =user_id;
@@ -27,11 +28,11 @@ public class MemoryBaseDto {
         this.writer_profile = writer_profile;
         this.reaction1 = reaction1;
         this.reaction2 = reaction2;
-
+        this.upload_time = upload_time;
     }
-    public static MemoryBaseDto of(Long memory_id, Long user_id, String location_name, String picture, Profile writer_profile, Reaction reaction1, Reaction reaction2)
+    public static MemoryBaseDto of(Long memory_id, Long user_id, String location_name, String picture, Profile writer_profile, Reaction reaction1, Reaction reaction2, String upload_time)
     {
-        return new MemoryBaseDto(memory_id, user_id, location_name, picture, writer_profile, reaction1, reaction2);
+        return new MemoryBaseDto(memory_id, user_id, location_name, picture, writer_profile, reaction1, reaction2, upload_time);
     }
 
 }

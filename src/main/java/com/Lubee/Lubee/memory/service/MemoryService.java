@@ -41,6 +41,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
@@ -117,8 +118,9 @@ public class MemoryService {
                     i++;
                 }
             }
-
-            MemoryBaseDto memoryBaseDto = MemoryBaseDto.of(memory.getMemory_id(), userCalendarMemory.getUser().getId(), location_name, picture, profile, reaction1, reaction2);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH시-mm분");
+            String upload_time = memory.getCreatedDate().format(formatter);
+            MemoryBaseDto memoryBaseDto = MemoryBaseDto.of(memory.getMemory_id(), userCalendarMemory.getUser().getId(), location_name, picture, profile, reaction1, reaction2, upload_time);
             memoryBaseDtoArrayList.add(memoryBaseDto);
         }
 
@@ -227,6 +229,8 @@ public class MemoryService {
         // MemoryBaseDto 생성
         Profile userProfile = user.getProfile();
         Location location = memory.getLocation();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH시-mm분");
+        String upload_time = memory.getCreatedDate().format(formatter);
         return MemoryBaseDto.of(
                 memory.getMemory_id(),
                 user.getId(),
@@ -234,7 +238,8 @@ public class MemoryService {
                 memory.getPicture(),
                 userProfile,// 로그인 유저의 프로필 정보를 가져와서 설정
                 reaction1,
-                reaction2
+                reaction2,
+                upload_time
         );
     }
     public List<Memory> getMemorybyUserAndDate(Date date, Couple couple) {

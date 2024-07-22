@@ -28,7 +28,7 @@ public class SwaggerConfig {
         String[] paths = {"/**"};
 
         return GroupedOpenApi.builder()
-                .group("PuzzleU")
+                .group("Lubee")
                 .pathsToMatch(paths)
                 .build();
     }

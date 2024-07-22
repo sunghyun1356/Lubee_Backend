@@ -12,4 +12,7 @@ import java.util.List;
 public interface CalendarMemoryRepository extends JpaRepository<CalendarMemory, Long> {
     @Query("SELECT cm FROM CalendarMemory cm JOIN cm.memory m WHERE cm.calendar.couple = :couple AND YEAR(m.time) = :year AND MONTH(m.time) = :month")
     List<CalendarMemory> findAllByCoupleAndYearAndMonth(@Param("couple") Couple couple, @Param("year") int year, @Param("month") int month);
+
+    @Query("SELECT cm FROM CalendarMemory cm JOIN cm.memory m WHERE cm.calendar.couple = :couple AND YEAR(m.time) = :year AND MONTH(m.time) = :month AND DAY(m.time) =:day")
+    List<CalendarMemory> findAllByCoupleAndYearAndMonthAndDay(@Param("couple") Couple couple, @Param("year") int year, @Param("month") int month, @Param("day") int day);
 }

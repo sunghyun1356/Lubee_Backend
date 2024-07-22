@@ -1,6 +1,7 @@
 package com.Lubee.Lubee.couple.controller;
 
 import com.Lubee.Lubee.common.api.ApiResponseDto;
+import com.Lubee.Lubee.couple.dto.CoupleInfoDto;
 import com.Lubee.Lubee.couple.dto.LubeeCodeResponse;
 import com.Lubee.Lubee.couple.service.CoupleService;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,11 @@ public class CoupleController {
             @RequestParam String inputCode) {
 
         return coupleService.linkCouple(userDetails, inputCode);
+    }
+    @GetMapping("/couple_info")
+    public ApiResponseDto<CoupleInfoDto> getCoupleInfo(@AuthenticationPrincipal UserDetails userDetails){
+
+        return coupleService.getCoupleInfo(userDetails);
     }
 
 }

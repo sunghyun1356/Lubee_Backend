@@ -1,7 +1,8 @@
 package com.Lubee.Lubee.calendar_memory.service;
 
-import com.Lubee.Lubee.calendar.dto.CalendarMemoryDto;
-import com.Lubee.Lubee.calendar.dto.CalendarMemoryListDto;
+import com.Lubee.Lubee.calendar.dto.CalendarMemoryDayDto;
+import com.Lubee.Lubee.calendar.dto.CalendarMemoryTotalListDto;
+import com.Lubee.Lubee.calendar.dto.CalendarMemoryYearMonthDto;
 import com.Lubee.Lubee.calendar.repository.CalendarRepository;
 import com.Lubee.Lubee.calendar_memory.domain.CalendarMemory;
 import com.Lubee.Lubee.calendar_memory.repository.CalendarMemoryRepository;
@@ -17,7 +18,6 @@ import com.Lubee.Lubee.memory.domain.Memory;
 import com.Lubee.Lubee.memory.dto.MemoryBaseDto;
 import com.Lubee.Lubee.user.domain.User;
 import com.Lubee.Lubee.user.repository.UserRepository;
-import com.Lubee.Lubee.user_calendar_memory.domain.UserCalendarMemory;
 import com.Lubee.Lubee.user_calendar_memory.repository.UserCalendarMemoryRepository;
 import com.Lubee.Lubee.user_memory_reaction.domain.UserMemoryReaction;
 import com.Lubee.Lubee.user_memory_reaction.repository.UserMemoryReactionRepository;
@@ -27,11 +27,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -46,13 +43,11 @@ public class CalendarMemoryService {
     private final UserMemoryReactionRepository userMemoryReactionRepository;
     private final UserCalendarMemoryRepository userCalendarMemoryRepository;
     private final LocationRepository locationRepository;
-    public CalendarMemoryListDto getYearlyMonthlyCalenderInfo(UserDetails loginUser) {
-        User user = userRepository.findByUsername(loginUser.getUsername()).orElseThrow(
-                () -> new RestApiException(ErrorType.NOT_FOUND_USER)
-        );
-        Couple couple = coupleRepository.findCoupleByUser(user).orElseThrow(
-                () -> new RestApiException(ErrorType.NOT_FOUND_COUPLE)
-        );
+    public CalendarMemoryTotalListDto getYearlyMonthlyCalendarInfo(UserDetails loginUser) {
+        User user = userRepository.findByUsername(loginUser.getUsername())
+                .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_USER));
+        Couple couple = coupleRepository.findCoupleByUser(user)
+                .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_COUPLE));
 
         Date startDate = couple.getStartDate();
         Calendar startCalendar = Calendar.getInstance();
@@ -64,57 +59,119 @@ public class CalendarMemoryService {
         int todayYear = todayCalendar.get(Calendar.YEAR);
         int todayMonth = todayCalendar.get(Calendar.MONTH);
 
-        List<CalendarMemoryDto> calendarMemoryDtoList = new ArrayList<>();
+        List<CalendarMemoryYearMonthDto> yearMonthDtoList = new ArrayList<>();
 
         for (int year = startYear; year <= todayYear; year++) {
             int start = (year == startYear) ? startMonth : 0;
             int end = (year == todayYear) ? todayMonth : 11;
 
             for (int month = start; month <= end; month++) {
-                // 특정 년도와 월에 해당하는 값들을 만족하는 calendarmemory 리스트를 가져온다
-                List<CalendarMemory> calendarMemoryList = calendarMemoryRepository.findAllByCoupleAndYearAndMonth(couple, year, month);
-                // 그 calendarmemory를 돌면서 각각에 대한 값들을 만들어준다
-                int finalYear = year;
-                int finalMonth = month;
-                List<CalendarMemoryDto> monthlyMemoryDtoList = calendarMemoryList.stream().map(calendarMemory -> {
-                    // 그 날짜의
-                    Memory memory = calendarMemory.getMemory();
-                    List<UserMemoryReaction> userMemoryReactionList = userMemoryReactionRepository.getUserMemoryReactionByUserAndMemory(user, memory);
-                    int i = 0;
-                    Reaction reaction1 = null;
-                    Reaction reaction2 = null;
-                    Profile profile = null;
+                List<CalendarMemoryDayDto> dayDtoListForMonth = new ArrayList<>();
+                Calendar monthCalendar = Calendar.getInstance();
+                monthCalendar.set(year, month, 1);
+                int daysInMonth = monthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-                    for (UserMemoryReaction userMemoryReaction : userMemoryReactionList) {
-                        if (i == 0) {
-                            reaction1 = userMemoryReaction.getReaction();
-                            i++;
-                        } else if (i == 1) {
-                            reaction2 = userMemoryReaction.getReaction();
-                            profile = userMemoryReaction.getUser().getProfile();
-                            i++;
+                for (int day = 1; day <= daysInMonth; day++) {
+                    List<MemoryBaseDto> memoryBaseDtoList = new ArrayList<>();
+
+                    List<CalendarMemory> calendarMemoryList = calendarMemoryRepository.findAllByCoupleAndYearAndMonthAndDay(couple, year, month + 1, day);
+                    if (calendarMemoryList != null) {
+                        for (CalendarMemory calendarMemory : calendarMemoryList) {
+                            Memory memory = calendarMemory.getMemory();
+                            List<UserMemoryReaction> userMemoryReactionList = userMemoryReactionRepository.getUserMemoryReactionByUserAndMemory(user, memory);
+
+                            Reaction reaction1 = null;
+                            Reaction reaction2 = null;
+                            Profile profile = null;
+                            if (!userMemoryReactionList.isEmpty()) {
+                                reaction1 = userMemoryReactionList.get(0).getReaction();
+                            }
+                            if (userMemoryReactionList.size() > 1) {
+                                reaction2 = userMemoryReactionList.get(1).getReaction();
+                                profile = userMemoryReactionList.get(1).getUser().getProfile();
+                            }
+
+                            Location location = locationRepository.findById(memory.getLocation().getLocation_id())
+                                    .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_LOCATION));
+                            String locationName = location.getName();
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH시-mm분");
+                            String upload_time = memory.getCreatedDate().format(formatter);
+                            MemoryBaseDto memoryBaseDto = MemoryBaseDto.of(
+                                    memory.getMemory_id(),
+                                    memory.getUserMemory().getUser().getId(),
+                                    locationName,
+                                    memory.getPicture(),
+                                    memory.getUserMemory().getUser().getProfile(),
+                                    reaction1,
+                                    reaction2,
+                                    upload_time
+                            );
+                            memoryBaseDtoList.add(memoryBaseDto);
                         }
                     }
-                    Location location = locationRepository.findById(memory.getLocation().getLocation_id()).orElseThrow(
-                            () -> new RestApiException(ErrorType.NOT_FOUND_LOCATION)
-                    );
-                    String locationName = location.getName();
-                    MemoryBaseDto memoryBaseDto = MemoryBaseDto.of(
-                            memory.getMemory_id(),
-                            memory.getUserMemory().getUser().getId(),
-                            locationName,
-                            memory.getPicture(),
-                            memory.getUserMemory().getUser().getProfile(),
-                            reaction1,
-                            reaction2
-                    );
-                    return CalendarMemoryDto.of(finalYear, finalMonth, memoryBaseDto);
-                }).toList();
 
-                calendarMemoryDtoList.addAll(monthlyMemoryDtoList);
+                    if (!memoryBaseDtoList.isEmpty()) {
+                        CalendarMemoryDayDto calendarMemoryDayDto = new CalendarMemoryDayDto();
+                        calendarMemoryDayDto.of(day, memoryBaseDtoList);
+                        dayDtoListForMonth.add(calendarMemoryDayDto);
+                    }
+                }
+
+                CalendarMemoryYearMonthDto yearMonthDto = CalendarMemoryYearMonthDto.of(year, month + 1, dayDtoListForMonth);
+                yearMonthDtoList.add(yearMonthDto);
             }
         }
 
-        return CalendarMemoryListDto.of(calendarMemoryDtoList);
+        return CalendarMemoryTotalListDto.of(yearMonthDtoList);
+    }
+    public CalendarMemoryDayDto getDayCalendarInfo(UserDetails loginUser, int year, int month, int day) {
+        User user = userRepository.findByUsername(loginUser.getUsername())
+                .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_USER));
+        Couple couple = coupleRepository.findCoupleByUser(user)
+                .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_COUPLE));
+
+        List<MemoryBaseDto> memoryBaseDtoList = new ArrayList<>();
+
+        // 해당 날짜에 맞는 CalendarMemory 리스트를 가져옵니다.
+        List<CalendarMemory> calendarMemoryList = calendarMemoryRepository.findAllByCoupleAndYearAndMonthAndDay(couple, year, month, day);
+        if (calendarMemoryList != null) {
+            for (CalendarMemory calendarMemory : calendarMemoryList) {
+                Memory memory = calendarMemory.getMemory();
+                List<UserMemoryReaction> userMemoryReactionList = userMemoryReactionRepository.getUserMemoryReactionByUserAndMemory(user, memory);
+
+                Reaction reaction1 = null;
+                Reaction reaction2 = null;
+                Profile profile = null;
+                if (!userMemoryReactionList.isEmpty()) {
+                    reaction1 = userMemoryReactionList.get(0).getReaction();
+                }
+                if (userMemoryReactionList.size() > 1) {
+                    reaction2 = userMemoryReactionList.get(1).getReaction();
+                    profile = userMemoryReactionList.get(1).getUser().getProfile();
+                }
+
+                Location location = locationRepository.findById(memory.getLocation().getLocation_id())
+                        .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_LOCATION));
+                String locationName = location.getName();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH시-mm분");
+                String upload_time = memory.getCreatedDate().format(formatter);
+                MemoryBaseDto memoryBaseDto = MemoryBaseDto.of(
+                        memory.getMemory_id(),
+                        memory.getUserMemory().getUser().getId(),
+                        locationName,
+                        memory.getPicture(),
+                        memory.getUserMemory().getUser().getProfile(),
+                        reaction1,
+                        reaction2,
+                        upload_time
+                );
+                memoryBaseDtoList.add(memoryBaseDto);
+            }
+        }
+
+        CalendarMemoryDayDto calendarMemoryDayDto = new CalendarMemoryDayDto();
+        calendarMemoryDayDto.of(day, memoryBaseDtoList);
+
+        return calendarMemoryDayDto;
     }
 }
