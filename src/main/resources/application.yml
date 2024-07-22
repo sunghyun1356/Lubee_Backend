@@ -33,8 +33,9 @@ cloud:
       secret-key: ${s3_secret_key}
 JWT_TOKEN : ${jwt_token}
 
+RESTAURANT_API_KEY : ${restaurant_api_key}
+CULTURE_API_KEY : ${culture_api_key}
+
 secrets:
-  RESTAURANT_API_KEY : ${restaurant_api_key}
-  CULTURE_API_KEY : ${culture_api_key}
   DOCKERHUB_USERNAME : ${dockerhub_username}
   DOCKERHUB_PASSWORD : ${dockerhub_password}
