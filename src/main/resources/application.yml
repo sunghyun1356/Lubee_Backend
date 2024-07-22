@@ -14,7 +14,7 @@ spring:
       hibernate.dialect: org.hibernate.dialect.MySQLDialect
   data:
     redis:
-      host: localhost
+      host: ${redis_endpoint}
       port: 6379
   sql:
     init:
