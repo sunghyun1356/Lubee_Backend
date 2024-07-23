@@ -11,7 +11,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private static final String[] ALLOWED_ORIGINS = {
             "http://localhost:5173",
             "http://localhost:8080",
-            "https://lubee.shop"
+            "https://lubee.site"
     };
 
     @Override
