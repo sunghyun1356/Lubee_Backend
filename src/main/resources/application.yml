@@ -40,6 +40,8 @@ management:
       enabled: false        # 우선 redis health check 막기
 
 JWT_TOKEN : ${jwt_token}
+REST_API_KEY : ${rest_api_key}
+
 RESTAURANT_API_KEY : ${restaurant_api_key}
 CULTURE_API_KEY : ${culture_api_key}
 

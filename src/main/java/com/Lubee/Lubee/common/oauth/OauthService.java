@@ -17,28 +17,20 @@ import com.Lubee.Lubee.user.repository.UserRepository;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.io.*;
-import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.spec.RSAPublicKeySpec;
-import java.util.Base64;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -48,6 +40,9 @@ public class OauthService {
     private final CoupleRepository coupleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+
+    @Value("${REST_API_KEY}")           // 카카오 rest api key
+    private String res_api_Key;
 
     public Boolean test()
     {
@@ -75,8 +70,9 @@ public class OauthService {
             BufferedWriter bw = new BufferedWriter((new OutputStreamWriter(conn.getOutputStream()))); // 전송하기 위한 것
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=b1301202d6b495289d802fa31dc8bd7e"); // 배포 하고 나서 설정
+            sb.append("&client_id=").append(res_api_Key); // 배포 하고 나서 설정
             sb.append("&redirect_uri=https://lubee.site/api/users/kakao/simpleLogin"); // 이부분 나중에 변경해야함
+            //sb.append("&redirect_uri=http://localhost:8080/api/users/kakao/simpleLogin"); // 로컬로 돌릴 때
             sb.append("&client_secret=AYKKr2WWSmWqlLb7gfMPmpuvQZUDXC2G");
             sb.append("&code=").append(code);
             bw.write(sb.toString());
