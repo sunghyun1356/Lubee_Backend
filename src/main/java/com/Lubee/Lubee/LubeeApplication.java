@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
 @SpringBootApplication
-@OpenAPIDefinition(servers = {@Server(url = "https://lubee.site", description = "Default Server URL")})
+//@OpenAPIDefinition(servers = {@Server(url = "https://lubee.site", description = "Default Server URL")})
 public class LubeeApplication {
 
 	static {System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");}
