@@ -153,7 +153,7 @@ public class DateCommentService {
 
         final User user = userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_USER));
-        final DateComment dateComment = dateCommentRepository.findById(updateDateCommentRequest.getDateCommentId())
+        final DateComment dateComment = dateCommentRepository.findById(updateDateCommentRequest.getDatecommentId())
                 .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_DATE_COMMENT));
 
         // 작성자와 현재 사용자를 비교하여 일치하지 않으면 예외 처리 - 작성자만 content를 바꿀 수 있음

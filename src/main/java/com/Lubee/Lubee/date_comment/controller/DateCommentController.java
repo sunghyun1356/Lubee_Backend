@@ -56,7 +56,7 @@ public class DateCommentController {
      * @param todayCoupleDateCommentRequest 해당 날짜에 작성된 커플의 데이트코멘트 요청 dto (userId, coupleId, date)
      * @return List<DateCommentResponse>
      */
-    @PostMapping("/today")
+    @GetMapping("/today")
     public ApiResponseDto<List<DateCommentResponse>> findTodayDateCommentByCouple(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody final TodayCoupleDateCommentRequest todayCoupleDateCommentRequest){

@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateDateCommentRequest {
 
-    private Long dateCommentId;
+    private Long datecommentId;
     private String content;
 
-    public UpdateDateCommentRequest(Long dateCommentId, String content) {
-        this.dateCommentId = dateCommentId;
+    public UpdateDateCommentRequest(Long datecommentId, String content) {
+        this.datecommentId = datecommentId;
         this.content = content;
     }
 }
