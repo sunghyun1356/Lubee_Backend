@@ -10,10 +10,9 @@ import java.util.Date;
 @NoArgsConstructor
 public class TodayCoupleDateCommentRequest {
 
-    private Long userId;
     private Long coupleId;
-    //private Long calendarId;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
     private Date date;
 
 }

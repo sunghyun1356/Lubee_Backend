@@ -3,7 +3,7 @@ package com.Lubee.Lubee.date_comment.controller;
 import com.Lubee.Lubee.common.api.ApiResponseDto;
 import com.Lubee.Lubee.common.api.SuccessResponse;
 import com.Lubee.Lubee.date_comment.dto.CreateDateCommentRequest;
-import com.Lubee.Lubee.date_comment.dto.DateCommentResponse;
+import com.Lubee.Lubee.date_comment.dto.TodayDateCommentResponse;
 import com.Lubee.Lubee.date_comment.dto.TodayCoupleDateCommentRequest;
 import com.Lubee.Lubee.date_comment.dto.UpdateDateCommentRequest;
 import com.Lubee.Lubee.date_comment.service.DateCommentService;
@@ -37,19 +37,6 @@ public class DateCommentController {
     }
 
     /**
-     * 데이트코멘트 조회 by Datecomment's id
-     *
-     * @param id 데이트코멘트의 id
-     * @return ApiResponseDto<DateCommentResponse>
-     */
-    /// 이거
-    @GetMapping("/{id}")
-    public ApiResponseDto<DateCommentResponse> findDateComment(@PathVariable final Long id){
-
-        return dateCommentService.findDateComment(id);
-    }
-
-    /**
      * 커플의 데이트코멘트 조회 (날짜 하루)
      *
      * @param userDetails 인증된 사용자의 정보를 담고 있는 UserDetails 객체
@@ -57,7 +44,7 @@ public class DateCommentController {
      * @return List<DateCommentResponse>
      */
     @GetMapping("/today")
-    public ApiResponseDto<List<DateCommentResponse>> findTodayDateCommentByCouple(
+    public ApiResponseDto<TodayDateCommentResponse> findTodayDateCommentByCouple(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody final TodayCoupleDateCommentRequest todayCoupleDateCommentRequest){
 

@@ -73,22 +73,6 @@ public class DateCommentService {
     }
 
     /**
-     * <데이트 코멘트 조회 by id>
-     *     - 해당 데이트코멘트 id로 조회되지 않으면, 에러 반환
-     */
-    @Transactional(readOnly = true)
-    public ApiResponseDto<DateCommentResponse> findDateComment(Long id) {
-
-        final DateComment dateComment = dateCommentRepository.findById(id)
-                .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_DATE_COMMENT));
-
-        return ResponseUtils.ok(
-                DateCommentResponse.of(dateComment),
-                ErrorResponse.builder().status(200).message("요청 성공").build()
-        );
-    }
-
-    /**
      * <커플의 데이트코멘트 조회 (날짜 하루)>
      *     - 파라미터에 따라 User, Couple, Calendar 조회 -> 에러 반환
      *     - (1) 둘다 작성 x => 에러 반환
@@ -96,13 +80,10 @@ public class DateCommentService {
      *     - (3) 둘다 작성 o => 둘의 데이트코멘트 모두 반환
      */
     @Transactional(readOnly = true)
-    public ApiResponseDto<List<DateCommentResponse>> findTodayDateCommentByCouple(UserDetails userDetails, TodayCoupleDateCommentRequest todayCoupleDateCommentRequest) {
+    public ApiResponseDto<TodayDateCommentResponse> findTodayDateCommentByCouple(UserDetails userDetails, TodayCoupleDateCommentRequest todayCoupleDateCommentRequest) {
 
         final User user = userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_USER));
-        if (!user.getId().equals(todayCoupleDateCommentRequest.getUserId())) {        // 열람요청자의 것이 아닐 때
-            throw new RestApiException(ErrorType.NOT_MATCHING_USER);
-        }
 
         final Couple couple = coupleRepository.findById(todayCoupleDateCommentRequest.getCoupleId())
                 .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_COUPLE));
@@ -115,7 +96,8 @@ public class DateCommentService {
             throw new RestApiException(ErrorType.NOT_FOUND_CALENDAR);
         }
 
-        List<DateCommentResponse> result = new ArrayList<>();
+        TodayDateCommentResponse todayDateCommentResponses = new TodayDateCommentResponse();
+        User lover = findOtherUserInCouple(user.getId(), couple);
 
         // 커플 모두가 작성한 데이트 코멘트 수 확인
         List<DateComment> dateComments = dateCommentRepository.findByCoupleAndCalendar(couple, calendar);
@@ -126,19 +108,19 @@ public class DateCommentService {
         }
 
         if (dateComments.size() == 1 && myComment != null) {    // 나만 작성
-            result.add(DateCommentResponse.of(myComment));
-            return ResponseUtils.ok(result, ErrorResponse.builder().status(200).message("상대방은 데이트코멘트를 작성하지 않았습니다.").build());
+            todayDateCommentResponses.setMine(DateCommentBaseDto.from(myComment, user));
+            todayDateCommentResponses.setLover(DateCommentBaseDto.from(null, lover));
+            return ResponseUtils.ok(todayDateCommentResponses, ErrorResponse.builder().status(200).message("상대방은 데이트코멘트를 작성하지 않았습니다.").build());
         }
 
         // 둘 다 작성한 경우 => 상대방의 것도 열람 가능
-        User otherUser = findOtherUserInCouple(user.getId(), couple);
-        DateComment otherUserComment = dateCommentRepository.findByUserAndCalendar(otherUser, calendar);
+        DateComment otherUserComment = dateCommentRepository.findByUserAndCalendar(lover, calendar);
 
-        result.add(DateCommentResponse.of(myComment));
-        result.add(DateCommentResponse.of(otherUserComment));
+        todayDateCommentResponses.setMine(DateCommentBaseDto.from(myComment, user));
+        todayDateCommentResponses.setLover(DateCommentBaseDto.from(otherUserComment, lover));
 
         return ResponseUtils.ok(
-                result,
+                todayDateCommentResponses,
                 ErrorResponse.builder().status(200).message("두 사람 모두 데이트코멘트를 작성했습니다.").build()
         );
     }
