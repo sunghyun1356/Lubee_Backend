@@ -2,6 +2,7 @@ package com.Lubee.Lubee.anniversary.dto;
 
 import com.Lubee.Lubee.couple.dto.CoupleInfoDto;
 import com.Lubee.Lubee.enumset.Profile;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.util.Date;
 @ToString
 public class AnniversaryDto {
     private String anniversary_title;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date anniversary_date;
 
 

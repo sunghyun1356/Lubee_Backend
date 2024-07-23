@@ -36,6 +36,7 @@ public class UserService {
     }
     public ApiResponseDto<SuccessResponse> onBoarding(UserDetails loginUser, SignupDto signupDto)
     {
+        System.out.println(loginUser);
         User user = userRepository.findUserByUsername(loginUser.getUsername()).orElseThrow(
                 () ->  new RestApiException(ErrorType.NOT_FOUND_USER)
         );

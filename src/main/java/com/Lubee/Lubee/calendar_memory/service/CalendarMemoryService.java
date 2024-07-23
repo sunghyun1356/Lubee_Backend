@@ -111,8 +111,7 @@ public class CalendarMemoryService {
                     }
 
                     if (!memoryBaseDtoList.isEmpty()) {
-                        CalendarMemoryDayDto calendarMemoryDayDto = new CalendarMemoryDayDto();
-                        calendarMemoryDayDto.of(day, memoryBaseDtoList);
+                        CalendarMemoryDayDto calendarMemoryDayDto = CalendarMemoryDayDto.of(day, memoryBaseDtoList);
                         dayDtoListForMonth.add(calendarMemoryDayDto);
                     }
                 }
@@ -134,9 +133,11 @@ public class CalendarMemoryService {
 
         // 해당 날짜에 맞는 CalendarMemory 리스트를 가져옵니다.
         List<CalendarMemory> calendarMemoryList = calendarMemoryRepository.findAllByCoupleAndYearAndMonthAndDay(couple, year, month, day);
+        System.out.println("calendar memoryList : " + calendarMemoryList);
         if (calendarMemoryList != null) {
             for (CalendarMemory calendarMemory : calendarMemoryList) {
                 Memory memory = calendarMemory.getMemory();
+                System.out.println("memoru_id :" + memory.getMemory_id());
                 List<UserMemoryReaction> userMemoryReactionList = userMemoryReactionRepository.getUserMemoryReactionByUserAndMemory(user, memory);
 
                 Reaction reaction1 = null;
@@ -169,9 +170,6 @@ public class CalendarMemoryService {
             }
         }
 
-        CalendarMemoryDayDto calendarMemoryDayDto = new CalendarMemoryDayDto();
-        calendarMemoryDayDto.of(day, memoryBaseDtoList);
-
-        return calendarMemoryDayDto;
+        return CalendarMemoryDayDto.of(day, memoryBaseDtoList);
     }
 }

@@ -55,8 +55,10 @@ public class JwtUtil {
 
     public String resolveToken(HttpServletRequest request)
     {
+        System.out.println("request : " + request);
         // Authorization 헤더의 값을 가져온다 - 클라이언트가 서버에게 토큰을 전달하기 위해 사용되는 문자열이 포함
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        System.out.println(bearerToken);
         // bearerToken이 null이 아니고 비어있는지 확인, 헤더에 Authorization키가 있고 그값이 비어 있지 않은지를 체크
 
 //        System.out.println("resolveToken token: " + bearerToken);

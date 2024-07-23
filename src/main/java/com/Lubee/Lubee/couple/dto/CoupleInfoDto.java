@@ -2,12 +2,12 @@ package com.Lubee.Lubee.couple.dto;
 
 import com.Lubee.Lubee.anniversary.dto.AnniversaryListDto;
 import com.Lubee.Lubee.enumset.Profile;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.util.Date;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ToString
 public class CoupleInfoDto{
@@ -16,7 +16,9 @@ public class CoupleInfoDto{
     private Profile profile_first;
     private String nickname_second;
     private Profile profile_second;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthday_first;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthday_second;
     private AnniversaryListDto anniversaryListDto;
 

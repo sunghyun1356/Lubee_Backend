@@ -77,7 +77,7 @@ public class MemoryService {
         Date today = new Date();
 
         // 날짜 포맷 정의하기
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-DD-MM");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         // 포맷에 맞춰 날짜를 문자열로 변환하기
         return formatter.format(today);
@@ -128,7 +128,7 @@ public class MemoryService {
     }
 
     @Transactional
-    public void createMemory(UserDetails loginUser, MemoryCreateRequestDto memoryRequest) {
+    public void createMemory(UserDetails loginUser, MultipartFile file, Long location_id) {
         // 사용자 정보 가져오기
         User user = userRepository.findByUsername(loginUser.getUsername()).orElseThrow(
                 () -> new RestApiException(ErrorType.NOT_FOUND_USER)
@@ -138,42 +138,50 @@ public class MemoryService {
         );
 
         // 파일 업로드 처리
-        MultipartFile picture = memoryRequest.getPicture();
-        if (picture != null && !picture.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             try {
-                String fileName = picture.getOriginalFilename();
+                LocalDate today = LocalDate.now();
+                int year = today.getYear();
+                int month = today.getMonthValue();
+                int day = today.getDayOfMonth();
+                List<Memory> memoryList = memoryRepository.findAllByCoupleAndYearAndMonthAndDay(couple, year, month, day);
+                if (memoryList.size() >=5)
+                {
+                    throw new RestApiException(ErrorType.TODAY_MEMORY_END);
+                }
+                String fileName = file.getOriginalFilename();
                 String folder = "/pictures"; // 저장할 폴더
                 String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com" + folder + "/" + fileName;
 
                 // S3에 파일 업로드
                 ObjectMetadata metadata = new ObjectMetadata();
-                metadata.setContentType(picture.getContentType());
-                metadata.setContentLength(picture.getSize());
-                amazonS3Client.putObject(bucket + folder, fileName, picture.getInputStream(), metadata);
+                metadata.setContentType(file.getContentType());
+                metadata.setContentLength(file.getSize());
+                amazonS3Client.putObject(bucket + folder, fileName, file.getInputStream(), metadata);
 
                 // Location 찾기
-                Location location = locationRepository.findById(memoryRequest.getLocation_id()).orElseThrow(
+                Location location = locationRepository.findById(location_id).orElseThrow(
                         () -> new RestApiException(ErrorType.NOT_FOUND_LOCATION)
                 );
 
                 // 오늘 날짜를 가져옵니다.
-                Date today = new Date();
+                Date today_date = new Date();
 
                 // 메모리 객체 생성 및 저장
                 Memory memory = new Memory();
                 memory.setLocation(location);
-                memory.setTime(today); // 현재 날짜 설정
+                memory.setTime(today_date); // 현재 날짜 설정
                 memory.setPicture(fileUrl);
                 memory.setCouple(couple);
 
                 memory = memoryRepository.save(memory);
 
                 // Calendar 존재 확인 및 생성
-                Calendar calendar = calendarRepository.findByCoupleAndEventDate(couple, today);
+                Calendar calendar = calendarRepository.findByCoupleAndEventDate(couple, today_date);
                 if (calendar == null) {
                     calendar = Calendar.builder()
                             .couple(couple)
-                            .eventDate(today)
+                            .eventDate(today_date)
                             .build();
                     calendar = calendarRepository.save(calendar);
                 }
@@ -188,7 +196,7 @@ public class MemoryService {
                 // UserMemory 생성 및 저장
                 UserMemory userMemory = UserMemory.of(user, memory);
                 userMemoryRepository.save(userMemory);
-
+                memory.setUserMemory(userMemory);
                 // UserCalendarMemory 생성 및 저장
                 UserCalendarMemory userCalendarMemory = UserCalendarMemory.of(user, calendarMemory);
                 userCalendarMemoryRepository.save(userCalendarMemory);

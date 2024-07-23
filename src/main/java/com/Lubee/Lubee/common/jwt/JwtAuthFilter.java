@@ -29,7 +29,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // request에 담긴 토큰을 가져온다
         // HTTP 요청으로 부터 JWT 토큰을 추출한다
         String token = jwtUtil.resolveToken(request);
-
+        System.out.println("token" + token);
         // 토큰이 null이거나 인증되지 않으면 다음 필터로 넘어간다
         if (token == null || !jwtUtil.validateToken(token)) {
             request.setAttribute("exception", ErrorType.NOT_VALID_TOKEN);

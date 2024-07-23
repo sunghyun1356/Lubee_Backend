@@ -160,6 +160,7 @@ public class CoupleService {
                 () -> new RestApiException(ErrorType.NOT_FOUND_USER)
         );
         AnniversaryListDto anniversaryListDto = anniversaryService.getAnniversaryInfo(couple);
+        System.out.println(user.getBirthday());
         CoupleInfoDto coupleInfoDto = CoupleInfoDto.of(
                 user.getNickname(),
                 user.getProfile(),

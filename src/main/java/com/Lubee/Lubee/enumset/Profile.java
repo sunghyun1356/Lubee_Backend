@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Profile {
-    a("a"),
+    a("1"),
     b("b"),
     c("c"),
     d("d");

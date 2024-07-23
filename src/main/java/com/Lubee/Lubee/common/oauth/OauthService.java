@@ -71,8 +71,8 @@ public class OauthService {
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=").append(res_api_Key); // 배포 하고 나서 설정
-            sb.append("&redirect_uri=https://lubee.site/api/users/kakao/simpleLogin"); // 이부분 나중에 변경해야함
-            //sb.append("&redirect_uri=http://localhost:8080/api/users/kakao/simpleLogin"); // 로컬로 돌릴 때
+            //sb.append("&redirect_uri=https://lubee.site/api/users/kakao/simpleLogin"); // 이부분 나중에 변경해야함
+            sb.append("&redirect_uri=http://localhost:8080/api/users/kakao/simpleLogin"); // 로컬로 돌릴 때
             sb.append("&client_secret=AYKKr2WWSmWqlLb7gfMPmpuvQZUDXC2G");
             sb.append("&code=").append(code);
             bw.write(sb.toString());
