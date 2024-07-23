@@ -70,7 +70,7 @@ public class CalendarController {
     /**
      * year과 month를 검색하였을 때 year와 month가 일치하는 usermemory의 id를 가져와서 반환해준다. 이때의 day도 반환해준다
      */
-    @GetMapping("/otal_calendar")
+    @GetMapping("/total_calendar")
     public ApiResponseDto<CalendarMemoryTotalListDto> getTotalCalendar(
             @AuthenticationPrincipal UserDetails userDetails)
     {
