@@ -10,6 +10,7 @@ import com.Lubee.Lubee.common.api.ApiResponseDto;
 import com.Lubee.Lubee.common.api.ResponseUtils;
 import com.Lubee.Lubee.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class CalendarController {
     @GetMapping("/honey/today")
     public ApiResponseDto<Integer> getTodayHoney(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam final Date date) {
+            @RequestParam @DateTimeFormat(pattern = "yyyy.MM.dd") final Date date) {
 
         return calendarService.getHoneyInfoByUserAndDate(userDetails, date);
     }
@@ -48,7 +49,8 @@ public class CalendarController {
      * @return ApiResponseDto<Long>  커플이 가진 전체 꿀 개수
      */
     @GetMapping("/honey/total")
-    public ApiResponseDto<Long> getTotalHoney(@AuthenticationPrincipal UserDetails userDetails){
+    public ApiResponseDto<Long> getTotalHoney(
+            @AuthenticationPrincipal UserDetails userDetails){
 
         return calendarService.getTotalHoneyByUser(userDetails);
     }
@@ -60,13 +62,14 @@ public class CalendarController {
      * @param monthlyTotalHoneyRequest 원하는 년/월을 integer 값으로
      * @return ApiResponseDto<Integer>  커플이 가진 전체 꿀 개수
      */
-    @PostMapping("/honey/month")
+    @GetMapping("/honey/month")
     public ApiResponseDto<Integer> getMonthHoney(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody final MonthlyTotalHoneyRequest monthlyTotalHoneyRequest){
 
         return calendarService.getMonthlyHoneyByUser(userDetails, monthlyTotalHoneyRequest);
     }
+
     /**
      * year과 month를 검색하였을 때 year와 month가 일치하는 usermemory의 id를 가져와서 반환해준다. 이때의 day도 반환해준다
      */
