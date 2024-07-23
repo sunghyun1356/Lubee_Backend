@@ -12,7 +12,7 @@ public class CreateDateCommentRequest {
 
     private String content;
     private Long coupleId;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
     private Date date;
 
     public CreateDateCommentRequest(String content, Long coupleId, Date date) {
